@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import {Icon} from 'native-base';
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { Icon } from 'native-base';
 
 const HomeScreen = () => {
   return (
@@ -13,12 +13,15 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 HomeScreen.navigationOptions = {
-  tabBarIcon: ({tintColor}) => <Icon name="home" style={{color: tintColor}} />,
+  tabBarIcon: ({ tintColor }) => (
+    <Icon name='home' style={{ color: tintColor }} />
+  )
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 });
