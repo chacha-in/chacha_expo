@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "chacha_expo",
+    "slug": "chacha_expo",
+    "privacy": "public",
+    "sdkVersion": "35.0.0",
+    "platforms": ["ios", "android", "web"],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chacha.map",
+      "config": {
+        "googleMapsApiKey": "AIzaSyC4D_PDl4kCPTnw6IbYonIW8bwf4EKalCo"
+      }
+    },
+    "android": {
+      "package": "com.chacha.map",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyAOMtYQs7TkqVBWbsuRuNw5vloN3RIklRg" }
+      }
+    }
+  }
+}
