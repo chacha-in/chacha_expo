@@ -26,7 +26,7 @@ const SignUpScreen = props => {
   const _signUpAsync = async () => {
     console.log(email, password, username);
     try {
-      const res = await fetch('https://blochaid.io/api/auth', {
+      const res = await fetch('https://blochaid.io/api/users', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -34,14 +34,19 @@ const SignUpScreen = props => {
         },
         body: JSON.stringify({
           email,
-          password
+          password,
+          username
         })
       });
 
       const resJson = await res.json();
 
       await AsyncStorage.setItem('userToken', resJson.token);
-      return props.navigation.navigate('App');
+
+      if (resJson.token) {
+        props.navigation.navigate('App');
+      }
+      return;
     } catch (error) {
       console.log(error);
     }
@@ -54,6 +59,7 @@ const SignUpScreen = props => {
           value={email}
           onChangeText={email => setValues({ ...values, email })}
           placeholder={'이메일'}
+          keyboardType='email-address'
           style={styles.input}
         />
 
@@ -62,6 +68,13 @@ const SignUpScreen = props => {
           onChangeText={password => setValues({ ...values, password })}
           placeholder={'패스워드'}
           secureTextEntry={true}
+          style={styles.input}
+        />
+
+        <TextInput
+          value={username}
+          onChangeText={username => setValues({ ...values, username })}
+          placeholder={'사용자 이름'}
           style={styles.input}
         />
       </View>
@@ -74,7 +87,7 @@ const SignUpScreen = props => {
           transparent
           onPressOut={() => props.navigation.navigate('SignIn')}
         >
-          <Text style={{ color: 'gray' }}>이미 차차 회원이긴사요?</Text>
+          <Text style={{ color: 'gray' }}>이미 차차 회원이신가요?</Text>
         </Button>
       </View>
     </View>
@@ -82,12 +95,12 @@ const SignUpScreen = props => {
 };
 
 SignUpScreen.navigationOptions = {
-  title: 'CHACHA'
+  title: '차차와 함께하세요'
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
-  title: { margin: 30, fontSize: 30 },
+  title: { margin: 20, fontSize: 20 },
   inputContainer: {
     alignItems: 'center',
     marginBottom: 20
@@ -96,6 +109,7 @@ const styles = StyleSheet.create({
     width: 280,
     height: 44,
     padding: 10,
+    marginBottom: 10,
     borderBottomWidth: 1,
     borderColor: 'gray'
   }

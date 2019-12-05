@@ -24,6 +24,8 @@ const AuthLoadingScreen = props => {
         }
       });
 
+      console.log(res);
+
       const resJson = await res.json();
 
       console.log(resJson);

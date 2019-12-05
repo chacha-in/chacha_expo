@@ -53,6 +53,7 @@ const SignInScreen = props => {
           value={email}
           onChangeText={email => setValues({ ...values, email })}
           placeholder={'이메일'}
+          keyboardType='email-address'
           style={styles.input}
         />
 
@@ -81,12 +82,12 @@ const SignInScreen = props => {
 };
 
 SignInScreen.navigationOptions = {
-  title: 'CHACHA'
+  title: '로그인하세요'
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
-  title: { margin: 30, fontSize: 30 },
+  title: { margin: 20, fontSize: 20 },
   inputContainer: {
     alignItems: 'center',
     marginBottom: 20
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
     width: 280,
     height: 44,
     padding: 10,
+    marginBottom: 10,
     borderBottomWidth: 1,
     borderColor: 'gray'
   }
