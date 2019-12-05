@@ -23,8 +23,27 @@ const SignInScreen = props => {
   const { email, password } = values;
 
   const _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    props.navigation.navigate('App');
+    console.log(email, password);
+    try {
+      const res = await fetch('https://blochaid.io/api/auth', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const resJson = await res.json();
+
+      await AsyncStorage.setItem('userToken', resJson.token);
+      return props.navigation.navigate('App');
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <View style={styles.container}>
