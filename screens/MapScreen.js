@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Platform } from 'react-native';
 import { Icon } from 'native-base';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -17,21 +17,14 @@ const initialRegion = {
 const MapScreen = () => {
   useEffect(() => {
     _getLocationAsync();
-
-    // if (Platform.OS === 'android' && !Constants.isDevice) {
-    //   setState({
-    //     errorMessage:
-    //       'Oops, this will not work on Sketch in an Android emulator. Try it on your device!'
-    //   });
-    // } else {
-    //   _getLocationAsync();
-    // }
-    // setTimeout(() => setState({ mapflex: 1 }), 100);
+    setTimeout(() => {
+      setState({ ...state, marginBottom: 0 });
+    }, 100);
   }, []);
 
   const _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    console.log(status);
+    // console.log(status);
     if (status !== 'granted') {
       setState({
         errorMessage: 'Permission to access location was denied'
@@ -39,8 +32,7 @@ const MapScreen = () => {
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    console.log(location);
-    setState({ location });
+    setState({ ...state, location });
   };
 
   const [state, setState] = useState({
@@ -52,7 +44,16 @@ const MapScreen = () => {
         (Dimensions.get('window').width / Dimensions.get('window').height) *
         0.01
     },
-    mapflex: 0,
+    markers: [
+      {
+        title: '상왕십리역 화장실',
+        description: '확실히 된다',
+        latlng: {
+          latitude: 37.56425783638769,
+          longitude: 127.0305786654353
+        }
+      }
+    ],
     isMapReady: false,
     location: null,
     errorMessage: null,
@@ -60,12 +61,12 @@ const MapScreen = () => {
   });
 
   const {
-    mapflex,
     region,
     isMapReady,
     location,
     errorMessage,
-    marginBottom
+    marginBottom,
+    markers
   } = state;
 
   const onRegionChange = event => {
@@ -73,13 +74,14 @@ const MapScreen = () => {
   };
 
   const writeToiletPoint = event => {
-    console.log(event.nativeEvent.coordinate);
+    // console.log(event);
   };
 
   const _onMapReady = () => {
-    // setState({ ...state, isMapReady: true });
-    setTimeout(() => setState({ marginBottom: 0 }), 100);
+    setState({ ...state, isMapReady: true });
   };
+
+  console.log(markers);
 
   return (
     <View style={{ flex: 1 }}>
@@ -91,10 +93,26 @@ const MapScreen = () => {
         showsMyLocationButton={true}
         initialRegion={initialRegion}
         region={region}
-        onRegionChange={onRegionChange}
+        // onRegionChange={onRegionChange}
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
-      />
+      >
+        {markers.map(marker => (
+          <Marker
+            coordinate={marker.latlng}
+            title={marker.title}
+            description={marker.description}
+          />
+        ))}
+        {/* <Marker
+          title='sample'
+          description='되라'
+          coordinate={{
+            latitude: 37.56425783638769,
+            longitude: 127.0305786654353
+          }}
+        /> */}
+      </MapView>
     </View>
   );
 };
