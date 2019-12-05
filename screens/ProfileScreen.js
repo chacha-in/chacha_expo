@@ -16,7 +16,6 @@ const ProfileScreen = props => {
 
   const _signOutAsync = async () => {
     console.log('signout');
-    console.log(props);
     await AsyncStorage.clear();
     //
     props.screenProps.navigation.navigate('Auth');
