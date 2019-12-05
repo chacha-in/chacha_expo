@@ -4,7 +4,6 @@ import { Icon } from 'native-base';
 
 import { createAppContainer } from 'react-navigation';
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
-import { createStackNavigator } from 'react-navigation-stack';
 
 // 하단 탭에 들어갈 컴포넌트들
 import HomeScreen from './HomeScreen';
@@ -15,9 +14,9 @@ import ProfileScreen from './ProfileScreen';
 const AppTabNavigator = createMaterialTopTabNavigator(
   {
     // SearchTab: SearchTab,
-    HomeScreen: { screen: HomeScreen },
-    MapScreen: { screen: MapScreen },
-    ProfileScreen: { screen: ProfileScreen }
+    HomeScreen: HomeScreen,
+    MapScreen: MapScreen,
+    ProfileScreen: ProfileScreen
   },
   {
     initialRouteName: 'MapScreen',
@@ -47,8 +46,14 @@ const AppTabNavigator = createMaterialTopTabNavigator(
 
 const AppTabContainet = createAppContainer(AppTabNavigator);
 
-const MainScreen = () => {
-  return <AppTabContainet style={{ flex: 1 }} />;
+const MainScreen = props => {
+  console.log('main');
+  // console.log(props.navigation);
+  return <AppTabContainet screenProps={props} style={{ flex: 1 }} />;
+};
+
+MainScreen.navigationOptions = {
+  title: 'chacha'
 };
 
 export default MainScreen;

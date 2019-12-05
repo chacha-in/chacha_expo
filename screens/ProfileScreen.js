@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, AsyncStorage } from 'react-native';
 import { Icon } from 'native-base';
 
-const ProfileScreen = () => {
+const ProfileScreen = props => {
   const getUser = async () => {
     try {
       let response = await fetch('https://blochaid.io/api/auth/test');
@@ -14,10 +14,19 @@ const ProfileScreen = () => {
     }
   };
 
+  const _signOutAsync = async () => {
+    console.log('signout');
+    console.log(props);
+    await AsyncStorage.clear();
+    //
+    props.screenProps.navigation.navigate('Auth');
+  };
+
   return (
     <View style={styles.container}>
       <Text>ProfileScreen</Text>
       <Button title='유저 정보' onPress={getUser}></Button>
+      <Button title='Actually, sign me out :)' onPress={_signOutAsync} />
     </View>
   );
 };
@@ -30,6 +39,10 @@ ProfileScreen.navigationOptions = {
     <Icon name='contact' style={{ color: tintColor }} />
   )
 };
+
+// ProfileScreen.navigationOptions = {
+//   title: 'CHACHA'
+// };
 
 const styles = StyleSheet.create({
   container: {

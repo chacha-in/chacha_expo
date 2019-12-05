@@ -16,14 +16,16 @@ const initialRegion = {
 
 const MapScreen = () => {
   useEffect(() => {
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      setState({
-        errorMessage:
-          'Oops, this will not work on Sketch in an Android emulator. Try it on your device!'
-      });
-    } else {
-      _getLocationAsync();
-    }
+    _getLocationAsync();
+
+    // if (Platform.OS === 'android' && !Constants.isDevice) {
+    //   setState({
+    //     errorMessage:
+    //       'Oops, this will not work on Sketch in an Android emulator. Try it on your device!'
+    //   });
+    // } else {
+    //   _getLocationAsync();
+    // }
     // setTimeout(() => setState({ mapflex: 1 }), 100);
   }, []);
 
@@ -46,15 +48,25 @@ const MapScreen = () => {
       latitude: 37.579,
       longitude: 126.9768,
       latitudeDelta: 0.01,
-      longitudeDelta: 0.01
+      longitudeDelta:
+        (Dimensions.get('window').width / Dimensions.get('window').height) *
+        0.01
     },
     mapflex: 0,
     isMapReady: false,
     location: null,
-    errorMessage: null
+    errorMessage: null,
+    marginBottom: 1
   });
 
-  const { mapflex, region, isLoading, location, errorMessage } = state;
+  const {
+    mapflex,
+    region,
+    isMapReady,
+    location,
+    errorMessage,
+    marginBottom
+  } = state;
 
   const onRegionChange = event => {
     console.log(event);
@@ -64,15 +76,16 @@ const MapScreen = () => {
     console.log(event.nativeEvent.coordinate);
   };
 
-  const onMapLayout = () => {
-    setState({ isMapReady: true });
+  const _onMapReady = () => {
+    // setState({ ...state, isMapReady: true });
+    setTimeout(() => setState({ marginBottom: 0 }), 100);
   };
 
   return (
     <View style={{ flex: 1 }}>
       <MapView
         provider='google'
-        style={{ flex: 1 }}
+        style={{ flex: 1, marginBottom: marginBottom }}
         showsUserLocation={true}
         followsUserLocation={true}
         showsMyLocationButton={true}
@@ -80,7 +93,7 @@ const MapScreen = () => {
         region={region}
         onRegionChange={onRegionChange}
         onLongPress={writeToiletPoint}
-        onMapReady={onMapLayout}
+        onMapReady={_onMapReady}
       />
     </View>
   );
