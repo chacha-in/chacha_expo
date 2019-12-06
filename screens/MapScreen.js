@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Platform,
+  Modal,
+  TouchableHighlight,
+  Text,
+  TextInput
+} from 'react-native';
 import { Icon } from 'native-base';
 import MapView, { Marker } from 'react-native-maps';
 import Constants from 'expo-constants';
@@ -55,9 +64,18 @@ const MapScreen = () => {
       }
     ],
     isMapReady: false,
+    writeToiletModalVisible: false,
+
+    preMarker: {},
     location: null,
     errorMessage: null,
     marginBottom: 1
+  });
+
+  const [values, setValues] = useState({
+    title: '',
+    description: '',
+    latlng: {}
   });
 
   const {
@@ -66,15 +84,27 @@ const MapScreen = () => {
     location,
     errorMessage,
     marginBottom,
-    markers
+    markers,
+    writeToiletModalVisible,
+    preMarker
   } = state;
+
+  const { title, description, latlng } = values;
 
   const onRegionChange = event => {
     console.log(event);
   };
 
   const writeToiletPoint = event => {
-    // console.log(event);
+    console.log(event.nativeEvent.coordinate);
+
+    const coordinate = event.nativeEvent.coordinate;
+
+    setState({
+      ...state,
+      preMarker: { latlng: coordinate },
+      writeToiletModalVisible: true
+    });
   };
 
   const _onMapReady = () => {
@@ -85,6 +115,51 @@ const MapScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
+      <Modal
+        animationType='slide'
+        transparent={false}
+        visible={writeToiletModalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}
+      >
+        <View style={styles.container}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.title}>화장실 등록</Text>
+            <TextInput
+              value={title}
+              onChangeText={title => setValues({ ...values, title })}
+              placeholder={'title'}
+              style={styles.input}
+            />
+            <TextInput
+              value={description}
+              onChangeText={description =>
+                setValues({ ...values, description })
+              }
+              placeholder={'description'}
+              style={styles.input}
+            />
+          </View>
+          <View style={{ width: 280 }}>
+            <TouchableHighlight
+              onPress={() => {
+                preMarker.title = title;
+                preMarker.description = description;
+                markers.push(preMarker);
+
+                setState({
+                  ...state,
+                  markers,
+                  writeToiletModalVisible: false
+                });
+              }}
+            >
+              <Text>등록 완료</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
       <MapView
         provider='google'
         style={{ flex: 1, marginBottom: marginBottom }}
@@ -97,21 +172,14 @@ const MapScreen = () => {
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
       >
-        {markers.map(marker => (
+        {markers.map((marker, i) => (
           <Marker
+            key={i}
             coordinate={marker.latlng}
             title={marker.title}
             description={marker.description}
           />
         ))}
-        {/* <Marker
-          title='sample'
-          description='되라'
-          coordinate={{
-            latitude: 37.56425783638769,
-            longitude: 127.0305786654353
-          }}
-        /> */}
       </MapView>
     </View>
   );
@@ -125,4 +193,20 @@ MapScreen.navigationOptions = {
 
 export default MapScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: { flex: 1, alignItems: 'center' },
+  title: { margin: 20, fontSize: 20 },
+  inputContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 40
+  },
+  input: {
+    width: 280,
+    height: 44,
+    padding: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: 'gray'
+  }
+});
