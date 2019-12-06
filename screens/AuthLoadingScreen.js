@@ -16,6 +16,7 @@ const AuthLoadingScreen = props => {
   const _bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
     console.log('토큰 유무 확인중');
+    console.log(userToken);
     try {
       const res = await fetch('https://blochaid.io/api/auth', {
         method: 'GET',

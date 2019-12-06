@@ -7,9 +7,10 @@ import {
   Modal,
   TouchableHighlight,
   Text,
-  TextInput
+  TextInput,
+  AsyncStorage
 } from 'react-native';
-import { Icon } from 'native-base';
+import { Icon, Button } from 'native-base';
 import MapView, { Marker } from 'react-native-maps';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -26,7 +27,9 @@ const initialRegion = {
 const MapScreen = () => {
   useEffect(() => {
     _getLocationAsync();
+
     setTimeout(() => {
+      _getToiletPointAsync();
       setState({ ...state, marginBottom: 0 });
     }, 100);
   }, []);
@@ -53,19 +56,9 @@ const MapScreen = () => {
         (Dimensions.get('window').width / Dimensions.get('window').height) *
         0.01
     },
-    markers: [
-      {
-        title: '상왕십리역 화장실',
-        description: '확실히 된다',
-        latlng: {
-          latitude: 37.56425783638769,
-          longitude: 127.0305786654353
-        }
-      }
-    ],
+    markers: [],
     isMapReady: false,
     writeToiletModalVisible: false,
-
     preMarker: {},
     location: null,
     errorMessage: null,
@@ -95,6 +88,26 @@ const MapScreen = () => {
     console.log(event);
   };
 
+  const _getToiletPointAsync = async () => {
+    try {
+      const res = await fetch('https://blochaid.io/api/toilets', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json'
+        }
+      });
+
+      const resJson = await res.json();
+
+      console.log(resJson);
+
+      setState({ ...state, markers: resJson });
+    } catch (error) {
+      console.log(error);
+    }
+    console.log('화장실 가져오기');
+  };
+
   const writeToiletPoint = event => {
     console.log(event.nativeEvent.coordinate);
 
@@ -107,11 +120,54 @@ const MapScreen = () => {
     });
   };
 
-  const _onMapReady = () => {
-    setState({ ...state, isMapReady: true });
+  const saveToiletPoint = async () => {
+    preMarker.title = title;
+    preMarker.description = description;
+
+    const userToken = await AsyncStorage.getItem('userToken');
+
+    if (title) {
+      try {
+        const res = await fetch('https://blochaid.io/api/toilets', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'x-auth-token': userToken
+          },
+          body: JSON.stringify(preMarker)
+        });
+
+        const resJson = await res.json();
+
+        markers.push(resJson);
+        console.log(resJson);
+
+        setState({
+          ...state,
+          markers,
+          writeToiletModalVisible: false
+        });
+        setValues({ title: '', description: '' });
+      } catch (error) {
+        console.log(error);
+      }
+      // markers.push(preMarker);
+
+      // setState({
+      //   ...state,
+      //   markers,
+      //   writeToiletModalVisible: false
+      // });
+      // setValues({ title: '', description: '' });
+    }
   };
 
   console.log(markers);
+
+  const _onMapReady = () => {
+    setState({ ...state, isMapReady: true });
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -133,30 +189,50 @@ const MapScreen = () => {
               style={styles.input}
             />
             <TextInput
+              multiline={true}
+              numberOfLines={6}
               value={description}
               onChangeText={description =>
                 setValues({ ...values, description })
               }
               placeholder={'description'}
-              style={styles.input}
+              style={styles.multilineInput}
             />
           </View>
           <View style={{ width: 280 }}>
-            <TouchableHighlight
+            <Button block info onPressOut={saveToiletPoint}>
+              <Text style={{ color: 'white', fontSize: 18 }}>등록</Text>
+            </Button>
+            <Button
+              full
+              transparent
+              onPressOut={() => {
+                setState({ ...state, writeToiletModalVisible: false });
+                setValues({ title: '', description: '' });
+              }}
+            >
+              <Text style={{ color: 'gray' }}>취소</Text>
+            </Button>
+
+            {/* <TouchableHighlight
               onPress={() => {
                 preMarker.title = title;
                 preMarker.description = description;
-                markers.push(preMarker);
 
-                setState({
-                  ...state,
-                  markers,
-                  writeToiletModalVisible: false
-                });
+                if (title) {
+                  markers.push(preMarker);
+
+                  setState({
+                    ...state,
+                    markers,
+                    writeToiletModalVisible: false
+                  });
+                  setValues({ title: '', description: '' });
+                }
               }}
             >
-              <Text>등록 완료</Text>
-            </TouchableHighlight>
+              <Text>등록</Text>
+            </TouchableHighlight> */}
           </View>
         </View>
       </Modal>
@@ -172,9 +248,9 @@ const MapScreen = () => {
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
       >
-        {markers.map((marker, i) => (
+        {markers.map(marker => (
           <Marker
-            key={i}
+            key={marker._id}
             coordinate={marker.latlng}
             title={marker.title}
             description={marker.description}
@@ -204,6 +280,15 @@ const styles = StyleSheet.create({
   input: {
     width: 280,
     height: 44,
+    padding: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: 'gray'
+  },
+  multilineInput: {
+    textAlignVertical: 'top',
+    width: 280,
+    height: 120,
     padding: 10,
     marginBottom: 10,
     borderBottomWidth: 1,
