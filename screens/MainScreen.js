@@ -47,7 +47,6 @@ const AppTabNavigator = createMaterialTopTabNavigator(
 const AppTabContainet = createAppContainer(AppTabNavigator);
 
 const MainScreen = props => {
-  console.log('main');
   return <AppTabContainet screenProps={props} style={{ flex: 1 }} />;
 };
 

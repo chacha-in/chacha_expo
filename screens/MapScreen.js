@@ -22,7 +22,9 @@ const MapScreen = () => {
     _getLocationAsync();
     setTimeout(() => {
       _getToiletPointAsync();
-      setState({ ...state, marginBottom: 0 });
+      setTimeout(() => {
+        setState({ ...state, marginBottom: 0 });
+      }, 100);
     }, 100);
   }, []);
 
@@ -54,12 +56,12 @@ const MapScreen = () => {
   };
 
   const [state, setState] = useState({
-    region: {},
+    region: null,
     markers: [],
     isMapReady: false,
     writeToiletModalVisible: false,
     preMarker: {},
-    location: null,
+
     errorMessage: null,
     marginBottom: 1
   });
@@ -73,13 +75,12 @@ const MapScreen = () => {
   const {
     region,
     isMapReady,
-    location,
+
     errorMessage,
     marginBottom,
     markers,
     writeToiletModalVisible,
-    preMarker,
-    isUserLocation
+    preMarker
   } = state;
 
   const { title, description, latlng } = values;
@@ -159,8 +160,11 @@ const MapScreen = () => {
     setState({ ...state, isMapReady: true });
   };
 
-  return isMapReady & markers & region ? (
-    <ActivityIndicator />
+  return markers === undefined && region === null && isMapReady === false ? (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size='large' />
+      <Text>가운데 왜 안오지</Text>
+    </View>
   ) : (
     <View style={{ flex: 1 }}>
       <Modal
@@ -210,11 +214,11 @@ const MapScreen = () => {
       </Modal>
 
       <MapView
-        provider='google'
+        // provider='google'
         style={{ flex: 1, marginBottom: marginBottom }}
         showsUserLocation={true}
-        followsUserLocation={true}
-        showsMyLocationButton={true}
+        // followsUserLocation={true}
+        // showsMyLocationButton={true}
         region={region}
         // onRegionChange={onRegionChange}
         onLongPress={writeToiletPoint}
