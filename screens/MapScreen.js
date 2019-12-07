@@ -8,21 +8,14 @@ import {
   TouchableHighlight,
   Text,
   TextInput,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator
 } from 'react-native';
 import { Icon, Button } from 'native-base';
 import MapView, { Marker } from 'react-native-maps';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-
-// 지도 초기 장소
-const initialRegion = {
-  latitude: 37.579,
-  longitude: 126.9768,
-  latitudeDelta: 0.01,
-  longitudeDelta: 0.01
-};
 
 const MapScreen = () => {
   useEffect(() => {
@@ -43,19 +36,29 @@ const MapScreen = () => {
       });
     }
 
-    let location = await Location.getCurrentPositionAsync({});
-    setState({ ...state, location });
-  };
-
-  const [state, setState] = useState({
-    region: {
-      latitude: 37.579,
-      longitude: 126.9768,
+    const location = await Location.getCurrentPositionAsync({});
+    const latitude = location.coords.latitude;
+    const longitude = location.coords.longitude;
+    const region = {
+      latitude: latitude,
+      longitude: longitude,
       latitudeDelta: 0.01,
       longitudeDelta:
         (Dimensions.get('window').width / Dimensions.get('window').height) *
         0.01
-    },
+    };
+    setState({ ...state, region });
+  };
+  // region: {
+  //   latitude: 37.579,
+  //   longitude: 126.9768,
+  //   latitudeDelta: 0.01,
+  //   longitudeDelta:
+  //     (Dimensions.get('window').width / Dimensions.get('window').height) *
+  //     0.01
+  // },
+  const [state, setState] = useState({
+    region: null,
     markers: [],
     isMapReady: false,
     writeToiletModalVisible: false,
@@ -79,7 +82,8 @@ const MapScreen = () => {
     marginBottom,
     markers,
     writeToiletModalVisible,
-    preMarker
+    preMarker,
+    isUserLocation
   } = state;
 
   const { title, description, latlng } = values;
@@ -152,24 +156,16 @@ const MapScreen = () => {
       } catch (error) {
         console.log(error);
       }
-      // markers.push(preMarker);
-
-      // setState({
-      //   ...state,
-      //   markers,
-      //   writeToiletModalVisible: false
-      // });
-      // setValues({ title: '', description: '' });
     }
   };
-
-  console.log(markers);
 
   const _onMapReady = () => {
     setState({ ...state, isMapReady: true });
   };
 
-  return (
+  return markers & region ? (
+    <ActivityIndicator />
+  ) : (
     <View style={{ flex: 1 }}>
       <Modal
         animationType='slide'
@@ -213,38 +209,17 @@ const MapScreen = () => {
             >
               <Text style={{ color: 'gray' }}>취소</Text>
             </Button>
-
-            {/* <TouchableHighlight
-              onPress={() => {
-                preMarker.title = title;
-                preMarker.description = description;
-
-                if (title) {
-                  markers.push(preMarker);
-
-                  setState({
-                    ...state,
-                    markers,
-                    writeToiletModalVisible: false
-                  });
-                  setValues({ title: '', description: '' });
-                }
-              }}
-            >
-              <Text>등록</Text>
-            </TouchableHighlight> */}
           </View>
         </View>
       </Modal>
       <MapView
-        provider='google'
+        // provider='google'
         style={{ flex: 1, marginBottom: marginBottom }}
         showsUserLocation={true}
-        followsUserLocation={true}
+        // followsUserLocation={true}
         showsMyLocationButton={true}
-        initialRegion={initialRegion}
         region={region}
-        // onRegionChange={onRegionChange}
+        onRegionChange={onRegionChange}
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
       >
