@@ -20,7 +20,6 @@ import * as Permissions from 'expo-permissions';
 const MapScreen = () => {
   useEffect(() => {
     _getLocationAsync();
-
     setTimeout(() => {
       _getToiletPointAsync();
       setState({ ...state, marginBottom: 0 });
@@ -37,8 +36,10 @@ const MapScreen = () => {
     }
 
     const location = await Location.getCurrentPositionAsync({});
+
     const latitude = location.coords.latitude;
     const longitude = location.coords.longitude;
+
     const region = {
       latitude: latitude,
       longitude: longitude,
@@ -47,18 +48,13 @@ const MapScreen = () => {
         (Dimensions.get('window').width / Dimensions.get('window').height) *
         0.01
     };
+    console.log(region);
+
     setState({ ...state, region });
   };
-  // region: {
-  //   latitude: 37.579,
-  //   longitude: 126.9768,
-  //   latitudeDelta: 0.01,
-  //   longitudeDelta:
-  //     (Dimensions.get('window').width / Dimensions.get('window').height) *
-  //     0.01
-  // },
+
   const [state, setState] = useState({
-    region: null,
+    region: {},
     markers: [],
     isMapReady: false,
     writeToiletModalVisible: false,
@@ -89,7 +85,7 @@ const MapScreen = () => {
   const { title, description, latlng } = values;
 
   const onRegionChange = event => {
-    console.log(event);
+    // console.log(event);
   };
 
   const _getToiletPointAsync = async () => {
@@ -163,7 +159,7 @@ const MapScreen = () => {
     setState({ ...state, isMapReady: true });
   };
 
-  return markers & region ? (
+  return isMapReady & markers & region ? (
     <ActivityIndicator />
   ) : (
     <View style={{ flex: 1 }}>
@@ -212,25 +208,28 @@ const MapScreen = () => {
           </View>
         </View>
       </Modal>
+
       <MapView
-        // provider='google'
+        provider='google'
         style={{ flex: 1, marginBottom: marginBottom }}
         showsUserLocation={true}
-        // followsUserLocation={true}
+        followsUserLocation={true}
         showsMyLocationButton={true}
         region={region}
-        onRegionChange={onRegionChange}
+        // onRegionChange={onRegionChange}
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
       >
-        {markers.map(marker => (
-          <Marker
-            key={marker._id}
-            coordinate={marker.latlng}
-            title={marker.title}
-            description={marker.description}
-          />
-        ))}
+        {markers === undefined
+          ? null
+          : markers.map(marker => (
+              <Marker
+                key={marker._id}
+                coordinate={marker.latlng}
+                title={marker.title}
+                description={marker.description}
+              />
+            ))}
       </MapView>
     </View>
   );
