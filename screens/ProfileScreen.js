@@ -27,7 +27,7 @@ const ProfileScreen = ({ props, auth: { user, loading, authenticated } }) => {
     <ActivityIndicator />
   ) : (
     <View style={styles.container}>
-      <Text>ProfileScreen</Text>
+      <Text>사용자 : {user.username}</Text>
       <Text>이메일 : {user.email}</Text>
       <Button title='Actually, sign me out :)' onPress={_signOutAsync} />
     </View>
