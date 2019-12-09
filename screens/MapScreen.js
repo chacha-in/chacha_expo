@@ -270,7 +270,7 @@ const MapScreen = ({ props, auth }) => {
               name='navigate'
               style={{
                 fontSize: 58,
-                color: 'gray'
+                color: 'rgba(20,20,20, 0.8)'
               }}
             />
           </TouchableOpacity>
@@ -281,7 +281,7 @@ const MapScreen = ({ props, auth }) => {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: 'white',
+              backgroundColor: 'rgba(255,255,255, 0.7)',
               borderRadius: 25,
               width: 50,
               height: 50
@@ -291,7 +291,7 @@ const MapScreen = ({ props, auth }) => {
               name='locate'
               style={{
                 fontSize: 40,
-                color: 'gray'
+                color: '#4d4d4d'
               }}
             />
           </TouchableOpacity>
