@@ -9,7 +9,8 @@ import {
   Text,
   TextInput,
   AsyncStorage,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 } from 'react-native';
 import { Icon, Button } from 'native-base';
 import MapView, { Marker } from 'react-native-maps';
@@ -52,7 +53,8 @@ const MapScreen = () => {
         0.01
     };
     console.log(region);
-    setState({ ...state, region, marginBottom: 0 });
+    setState({ ...state, region });
+    // setState({ ...state, region, marginBottom: 0 });
 
     _getToiletPointAsync();
   };
@@ -158,6 +160,24 @@ const MapScreen = () => {
     }
   };
 
+  const goToCurrentLocation = async () => {
+    const location = await Location.getCurrentPositionAsync({});
+
+    const latitude = location.coords.latitude;
+    const longitude = location.coords.longitude;
+
+    const region = {
+      latitude: latitude,
+      longitude: longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta:
+        (Dimensions.get('window').width / Dimensions.get('window').height) *
+        0.01
+    };
+    console.log(region);
+    setState({ ...state, region });
+  };
+
   const _onMapReady = () => {
     setState({ ...state, isMapReady: true });
   };
@@ -217,7 +237,8 @@ const MapScreen = () => {
 
       <MapView
         // provider='google'
-        style={{ flex: 1, marginBottom: marginBottom }}
+        // style={{ flex: 1, marginBottom: marginBottom }}
+        style={{ flex: 1 }}
         showsUserLocation={true}
         // followsUserLocation={true}
         // showsMyLocationButton={true}
@@ -237,6 +258,67 @@ const MapScreen = () => {
               />
             ))}
       </MapView>
+      <View
+        style={{
+          position: 'absolute', //use absolute position to show button on top of the map
+          bottom: '0%', //for center align
+          right: '0%',
+          // alignSelf: 'flex-end', //for align to right
+          margin: 17
+          // backgroundColor: 'white',
+          // width: 50,
+          // height: 50,
+          // borderRadius: 25
+        }}
+      >
+        {Platform.OS === 'ios' ? (
+          <TouchableOpacity
+            onPressOut={goToCurrentLocation}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Icon
+              name='navigate'
+              style={{
+                fontSize: 58,
+                color: 'gray'
+              }}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPressOut={goToCurrentLocation}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'white',
+              borderRadius: 25,
+              width: 50,
+              height: 50
+            }}
+          >
+            <Icon
+              name='locate'
+              style={{
+                fontSize: 40,
+                color: 'gray'
+              }}
+            />
+          </TouchableOpacity>
+        )}
+        {/* <TouchableOpacity
+          onPressOut={goToCurrentLocation}
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Icon
+            name='navigate'
+            style={{
+              fontSize: 58,
+              color: 'gray'
+            }}
+          />
+        </TouchableOpacity> */}
+      </View>
     </View>
   );
 };
