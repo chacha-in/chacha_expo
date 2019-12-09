@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform, Text } from 'react-native';
 import { Icon } from 'native-base';
 
 import { createAppContainer } from 'react-navigation';
@@ -51,9 +51,8 @@ const MainScreen = props => {
 };
 
 MainScreen.navigationOptions = {
-  title: 'chacha'
+  title: '차차'
 };
-
 export default MainScreen;
 
 const styles = StyleSheet.create({});

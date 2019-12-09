@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, AsyncStorage } from 'react-native';
 import { Icon } from 'native-base';
 
 const ProfileScreen = props => {
+  console.log('profile screen 진입');
   const getUser = async () => {
     try {
       let response = await fetch('https://blochaid.io/api/auth/test');
@@ -24,6 +25,7 @@ const ProfileScreen = props => {
   return (
     <View style={styles.container}>
       <Text>ProfileScreen</Text>
+      <Text>이메일 : {}</Text>
       <Button title='유저 정보' onPress={getUser}></Button>
       <Button title='Actually, sign me out :)' onPress={_signOutAsync} />
     </View>

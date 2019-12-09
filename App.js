@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
+import * as Font from 'expo-font';
 
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -14,6 +15,11 @@ import AuthLoadingScreen from './screens/AuthLoadingScreen';
 // import ProfileScreen from './screens/ProfileScreen';
 
 const App = () => {
+  useEffect(() => {
+    Font.loadAsync({
+      Jalnan: require('./assets/fonts/Jalnan.ttf')
+    });
+  });
   return (
     <View style={{ flex: 1 }}>
       <AppStackNavigator style={{ flex: 1 }} />
