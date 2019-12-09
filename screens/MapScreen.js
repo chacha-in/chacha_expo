@@ -15,7 +15,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { Icon, Button } from 'native-base';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Callout } from 'react-native-maps';
 
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -242,10 +242,19 @@ const MapScreen = ({ props, auth }) => {
               <Marker
                 key={marker._id}
                 coordinate={marker.latlng}
-                title={marker.title}
-                description={marker.description}
+                // title={marker.title}
+                // description={marker.description}
                 tracksViewChanges={false}
-              />
+                // onCalloutPress={() => console.log(marker.title)}
+              >
+                <Callout onPress={() => console.log(marker.title)}>
+                  <Text>
+                    {marker.title}
+                    {'\n'}
+                    {marker.description}
+                  </Text>
+                </Callout>
+              </Marker>
             ))}
       </MapView>
       <View
