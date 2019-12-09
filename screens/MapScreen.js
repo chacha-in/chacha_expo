@@ -12,9 +12,11 @@ import {
   TextInput,
   AsyncStorage,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  Picker
 } from 'react-native';
 import { Icon, Button } from 'native-base';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
 import * as Location from 'expo-location';
@@ -71,7 +73,11 @@ const MapScreen = ({ props, auth }) => {
   const [values, setValues] = useState({
     title: '',
     description: '',
-    latlng: {}
+    latlng: {},
+    sex: 'both',
+    forDisabled: false,
+    diaperChangingTable: false,
+    checked: 'both'
   });
 
   const {
@@ -118,6 +124,9 @@ const MapScreen = ({ props, auth }) => {
   const saveToiletPoint = async () => {
     preMarker.title = title;
     preMarker.description = description;
+    preMarker.sex = values.sex;
+    preMarker.forDisabled = values.forDisabled;
+    preMarker.diaperChangingTable = values.diaperChangingTable;
 
     const userToken = await AsyncStorage.getItem('userToken');
 
@@ -142,7 +151,13 @@ const MapScreen = ({ props, auth }) => {
           markers,
           writeToiletModalVisible: false
         });
-        setValues({ title: '', description: '' });
+        setValues({
+          title: '',
+          description: '',
+          sex: 'both',
+          forDisabled: false,
+          diaperChangingTable: false
+        });
       } catch (error) {
         console.log(error);
       }
@@ -192,9 +207,105 @@ const MapScreen = ({ props, auth }) => {
             <TextInput
               value={title}
               onChangeText={title => setValues({ ...values, title })}
-              placeholder={'title'}
+              placeholder={'화장실 이름을 입력해주세요'}
               style={styles.input}
             />
+            <View style={{ width: 250, marginBottom: 10 }}>
+              <TouchableOpacity
+                style={styles.selectBoxContainer}
+                onPressOut={() =>
+                  setValues({ ...values, sex: 'both', checked: 'both' })
+                }
+              >
+                <Text>남녀 화장실 모두 있어요</Text>
+                {values.checked === 'both' ? (
+                  <Icon
+                    name='checkmark-circle-outline'
+                    style={styles.selectIcon}
+                  />
+                ) : (
+                  <Text></Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.selectBoxContainer}
+                onPressOut={() =>
+                  setValues({
+                    ...values,
+                    sex: 'femaleOnly',
+                    checked: 'femaleOnly'
+                  })
+                }
+              >
+                <Text>여자 화장실만 있어요</Text>
+                {values.checked === 'femaleOnly' ? (
+                  <Icon
+                    name='checkmark-circle-outline'
+                    style={styles.selectIcon}
+                  />
+                ) : (
+                  <Text></Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.selectBoxContainer}
+                onPressOut={() =>
+                  setValues({
+                    ...values,
+                    sex: 'maleOnly',
+                    checked: 'maleOnly'
+                  })
+                }
+              >
+                <Text>남자 화장실만 있어요</Text>
+                {values.checked === 'maleOnly' ? (
+                  <Icon
+                    name='checkmark-circle-outline'
+                    style={styles.selectIcon}
+                  />
+                ) : (
+                  <Text></Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.selectBoxContainer}
+                onPressOut={() =>
+                  setValues({
+                    ...values,
+                    forDisabled: !values.forDisabled
+                  })
+                }
+              >
+                <Text>장애인 화장실 있어요</Text>
+                {values.forDisabled ? (
+                  <Icon
+                    name='checkmark-circle-outline'
+                    style={styles.selectIcon}
+                  />
+                ) : (
+                  <Text></Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.selectBoxContainer}
+                onPressOut={() =>
+                  setValues({
+                    ...values,
+                    diaperChangingTable: !values.diaperChangingTable
+                  })
+                }
+              >
+                <Text>기저귀 거치대 있어요</Text>
+                {values.diaperChangingTable ? (
+                  <Icon
+                    name='checkmark-circle-outline'
+                    style={styles.selectIcon}
+                  />
+                ) : (
+                  <Text></Text>
+                )}
+              </TouchableOpacity>
+            </View>
             <TextInput
               multiline={true}
               numberOfLines={6}
@@ -202,7 +313,7 @@ const MapScreen = ({ props, auth }) => {
               onChangeText={description =>
                 setValues({ ...values, description })
               }
-              placeholder={'description'}
+              placeholder={'자세한 정보를 알려주세요'}
               style={styles.multilineInput}
             />
           </View>
@@ -230,7 +341,7 @@ const MapScreen = ({ props, auth }) => {
         }}
         style={{ flex: 1, marginBottom: marginBottom }}
         showsUserLocation={true}
-        followsUserLocation={true}
+        // followsUserLocation={true}
         // showsMyLocationButton={true}
         region={region}
         onLongPress={writeToiletPoint}
@@ -248,11 +359,71 @@ const MapScreen = ({ props, auth }) => {
                 // onCalloutPress={() => console.log(marker.title)}
               >
                 <Callout onPress={() => console.log(marker.title)}>
-                  <Text>
-                    {marker.title}
-                    {'\n'}
-                    {marker.description}
-                  </Text>
+                  <Text>{marker.title}</Text>
+                  <View
+                    style={{ flexDirection: 'row', justifyContent: 'center' }}
+                  >
+                    {(marker.sex !== '') & (marker.sex === 'both') ? (
+                      <>
+                        <FontAwesomeIcon
+                          name='female'
+                          size={25}
+                          color='#ff4d4d'
+                        />
+                        <Text> </Text>
+                        <FontAwesomeIcon
+                          name='male'
+                          size={25}
+                          color='#3366ff'
+                        />
+                      </>
+                    ) : null}
+
+                    {(marker.sex !== '') & (marker.sex === 'maleOnly') ? (
+                      <>
+                        <FontAwesomeIcon
+                          name='male'
+                          size={25}
+                          color='#3366ff'
+                        />
+                      </>
+                    ) : null}
+
+                    {(marker.sex !== '') & (marker.sex === 'femaleOnly') ? (
+                      <>
+                        <FontAwesomeIcon
+                          name='female'
+                          size={25}
+                          color='#ff4d4d'
+                        />
+                      </>
+                    ) : null}
+                    {(marker.forDisabled !== undefined) &
+                    (marker.forDisabled === true) ? (
+                      <>
+                        <Text>{'    '}</Text>
+                        <FontAwesomeIcon
+                          style={{ alignSelf: 'flex-end' }}
+                          name='wheelchair'
+                          size={23}
+                          color='#39ac73'
+                        />
+                      </>
+                    ) : null}
+                    {(marker.diaperChangingTable !== undefined) &
+                    (marker.diaperChangingTable === true) ? (
+                      <>
+                        <Text>{'   '}</Text>
+                        <FontAwesomeIcon
+                          style={{ alignSelf: 'flex-end' }}
+                          name='baby'
+                          size={24}
+                          color='#666699'
+                        />
+                      </>
+                    ) : null}
+                  </View>
+                  {/* <Text>{marker.description}</Text> */}
                 </Callout>
               </Marker>
             ))}
@@ -330,7 +501,7 @@ export default connect(mapStateToProps)(MapScreen);
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
-  title: { margin: 20, fontSize: 20 },
+  title: { margin: 10, fontSize: 20 },
   inputContainer: {
     alignItems: 'center',
     marginBottom: 20,
@@ -352,5 +523,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 1,
     borderColor: 'gray'
+  },
+  selectBoxContainer: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    height: 35
+  },
+  selectIcon: {
+    fontSize: 25,
+    color: 'green'
   }
 });

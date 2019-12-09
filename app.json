@@ -4,7 +4,11 @@
     "slug": "chacha_expo",
     "privacy": "public",
     "sdkVersion": "35.0.0",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,7 +20,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.chacha.map",
@@ -27,8 +33,11 @@
     "android": {
       "package": "com.chacha.map",
       "config": {
-        "googleMaps": { "apiKey": "AIzaSyAOMtYQs7TkqVBWbsuRuNw5vloN3RIklRg" }
+        "googleMaps": {
+          "apiKey": "AIzaSyAOMtYQs7TkqVBWbsuRuNw5vloN3RIklRg"
+        }
       }
-    }
+    },
+    "description": ""
   }
 }
