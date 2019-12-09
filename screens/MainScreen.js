@@ -21,7 +21,7 @@ const AppTabNavigator = createMaterialTopTabNavigator(
   {
     initialRouteName: 'MapScreen',
     animationEnabled: true,
-    swipeEnabled: true,
+    swipeEnabled: false,
     tabBarPosition: 'bottom',
     tabBarOptions: {
       style: {

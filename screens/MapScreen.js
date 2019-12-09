@@ -39,7 +39,7 @@ const MapScreen = () => {
       });
     }
 
-    const location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync({ accuracy: 6 });
 
     const latitude = location.coords.latitude;
     const longitude = location.coords.longitude;
@@ -61,7 +61,7 @@ const MapScreen = () => {
 
   const [state, setState] = useState({
     region: null,
-    markers: null,
+    markers: [],
     isMapReady: false,
     writeToiletModalVisible: false,
     preMarker: {},
@@ -79,7 +79,6 @@ const MapScreen = () => {
   const {
     region,
     isMapReady,
-
     errorMessage,
     marginBottom,
     markers,
@@ -247,16 +246,14 @@ const MapScreen = () => {
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
       >
-        {markers === null
-          ? null
-          : markers.map(marker => (
-              <Marker
-                key={marker._id}
-                coordinate={marker.latlng}
-                title={marker.title}
-                description={marker.description}
-              />
-            ))}
+        {markers.map(marker => (
+          <Marker
+            key={marker._id}
+            coordinate={marker.latlng}
+            title={marker.title}
+            description={marker.description}
+          />
+        ))}
       </MapView>
       <View
         style={{

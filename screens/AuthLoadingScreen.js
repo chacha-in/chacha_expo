@@ -16,9 +16,10 @@ const AuthLoadingScreen = ({ props, auth: { isAuthenticated, loading } }) => {
 
   // Fetch the token from storage then navigate to our appropriate place
   const _bootstrapAsync = async () => {
-    // const userToken = await AsyncStorage.getItem('userToken');
+    const userToken = await AsyncStorage.getItem('userToken');
+
     // console.log('토큰 유무 확인중');
-    props.navigation.navigate(isAuthenticated ? 'App' : 'Auth');
+    props.navigation.navigate(userToken ? 'App' : 'Auth');
 
     // try {
     //   const res = await fetch('https://blochaid.io/api/auth', {
