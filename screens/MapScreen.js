@@ -20,12 +20,13 @@ import * as Permissions from 'expo-permissions';
 const MapScreen = () => {
   useEffect(() => {
     _getLocationAsync();
-    setTimeout(() => {
-      _getToiletPointAsync();
-      setTimeout(() => {
-        setState({ ...state, marginBottom: 0 });
-      }, 100);
-    }, 100);
+
+    // setTimeout(() => {
+
+    //   // setTimeout(() => {
+    //   //   setState({ ...state, marginBottom: 0 });
+    //   // }, 100);
+    // }, 100);
   }, []);
 
   const _getLocationAsync = async () => {
@@ -51,13 +52,14 @@ const MapScreen = () => {
         0.01
     };
     console.log(region);
+    setState({ ...state, region, marginBottom: 0 });
 
-    setState({ ...state, region });
+    _getToiletPointAsync();
   };
 
   const [state, setState] = useState({
     region: null,
-    markers: [],
+    markers: null,
     isMapReady: false,
     writeToiletModalVisible: false,
     preMarker: {},
@@ -101,8 +103,8 @@ const MapScreen = () => {
       const resJson = await res.json();
 
       console.log(resJson);
-
-      setState({ ...state, markers: resJson });
+      const target = { ...state, markers: [...resJson] };
+      setState({ ...target });
     } catch (error) {
       console.log(error);
     }
@@ -160,7 +162,7 @@ const MapScreen = () => {
     setState({ ...state, isMapReady: true });
   };
 
-  return markers === undefined && region === null && isMapReady === false ? (
+  return (markers === null) & (region === null) & (isMapReady === false) ? (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <ActivityIndicator size='large' />
       <Text>가운데 왜 안오지</Text>
@@ -224,7 +226,7 @@ const MapScreen = () => {
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
       >
-        {markers === undefined
+        {markers === null
           ? null
           : markers.map(marker => (
               <Marker
