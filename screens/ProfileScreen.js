@@ -1,38 +1,47 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, AsyncStorage } from 'react-native';
+import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  AsyncStorage,
+  ActivityIndicator
+} from 'react-native';
 import { Icon } from 'native-base';
 
-const ProfileScreen = props => {
+const ProfileScreen = ({ props, auth: { user, loading, authenticated } }) => {
   console.log('profile screen 진입');
-  const getUser = async () => {
-    try {
-      let response = await fetch('https://blochaid.io/api/auth/test');
-      let responseJson = await response.json();
-      console.log(responseJson);
-      return;
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const _signOutAsync = async () => {
     console.log('signout');
+    console.log(props);
     await AsyncStorage.clear();
-    //
+
     props.screenProps.navigation.navigate('Auth');
   };
 
-  return (
+  return loading === null ? (
+    <ActivityIndicator />
+  ) : (
     <View style={styles.container}>
       <Text>ProfileScreen</Text>
-      <Text>이메일 : {}</Text>
-      <Button title='유저 정보' onPress={getUser}></Button>
+      <Text>이메일 : {user.email}</Text>
       <Button title='Actually, sign me out :)' onPress={_signOutAsync} />
     </View>
   );
 };
 
-export default ProfileScreen;
+ProfileScreen.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  auth: state.auth,
+  props: ownProps
+});
 
 ProfileScreen.navigationOptions = {
   // tabBarIcon: ({tintColor}) => <View style={styles.tabIcon}></View>,
@@ -40,6 +49,9 @@ ProfileScreen.navigationOptions = {
     <Icon name='contact' style={{ color: tintColor }} />
   )
 };
+
+// export default ProfileScreen;
+export default connect(mapStateToProps)(ProfileScreen);
 
 // ProfileScreen.navigationOptions = {
 //   title: 'CHACHA'

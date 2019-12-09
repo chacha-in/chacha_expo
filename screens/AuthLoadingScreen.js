@@ -16,25 +16,26 @@ const AuthLoadingScreen = props => {
   const _bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
     console.log('토큰 유무 확인중');
-    console.log(userToken);
-    try {
-      const res = await fetch('https://blochaid.io/api/auth', {
-        method: 'GET',
-        headers: {
-          'x-auth-token': userToken
-        }
-      });
+    props.navigation.navigate(userToken ? 'App' : 'Auth');
 
-      console.log(res);
+    // try {
+    //   const res = await fetch('https://blochaid.io/api/auth', {
+    //     method: 'GET',
+    //     headers: {
+    //       'x-auth-token': userToken
+    //     }
+    //   });
 
-      const resJson = await res.json();
+    //   console.log(res);
 
-      console.log(resJson);
+    //   const resJson = await res.json();
 
-      props.navigation.navigate(resJson.email ? 'App' : 'Auth');
-    } catch (error) {
-      console.log(error);
-    }
+    //   console.log(resJson);
+
+    //   props.navigation.navigate(resJson.email ? 'App' : 'Auth');
+    // } catch (error) {
+    //   console.log(error);
+    // }
 
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.

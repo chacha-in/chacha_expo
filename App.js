@@ -10,20 +10,24 @@ import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import AuthLoadingScreen from './screens/AuthLoadingScreen';
 
-// import HomeScreen from './screens/HomeScreen';
-// import MapScreen from './screens/MapScreen';
-// import ProfileScreen from './screens/ProfileScreen';
+// Redux
+import { Provider } from 'react-redux';
+import store from './store';
+import { loadUser } from './actions/auth';
 
 const App = () => {
   useEffect(() => {
-    Font.loadAsync({
-      Jalnan: require('./assets/fonts/Jalnan.ttf')
-    });
+    store.dispatch(loadUser());
+    // Font.loadAsync({
+    //   Jalnan: require('./assets/fonts/Jalnan.ttf')
+    // });
   });
   return (
-    <View style={{ flex: 1 }}>
-      <AppStackNavigator style={{ flex: 1 }} />
-    </View>
+    <Provider store={store}>
+      <View style={{ flex: 1 }}>
+        <AppStackNavigator style={{ flex: 1 }} />
+      </View>
+    </Provider>
   );
 };
 
