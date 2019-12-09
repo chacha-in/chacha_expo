@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import {
   View,
   StyleSheet,
   Dimensions,
   Platform,
   Modal,
-  TouchableHighlight,
   Text,
   TextInput,
   AsyncStorage,
@@ -14,11 +16,11 @@ import {
 } from 'react-native';
 import { Icon, Button } from 'native-base';
 import MapView, { Marker } from 'react-native-maps';
-import Constants from 'expo-constants';
+
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
-const MapScreen = () => {
+const MapScreen = ({ props, auth }) => {
   useEffect(() => {
     _getLocationAsync();
     // setTimeout(() => {
@@ -28,14 +30,14 @@ const MapScreen = () => {
 
   const _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    // console.log(status);
+
     if (status !== 'granted') {
       setState({
         errorMessage: 'Permission to access location was denied'
       });
     }
 
-    const location = await Location.getCurrentPositionAsync({ accuracy: 6 });
+    const location = await Location.getCurrentPositionAsync({});
 
     const latitude = location.coords.latitude;
     const longitude = location.coords.longitude;
@@ -48,7 +50,7 @@ const MapScreen = () => {
         (Dimensions.get('window').width / Dimensions.get('window').height) *
         0.01
     };
-    console.log(region);
+
     // setState({ ...state, region });
     setState({ ...state, region, marginBottom: 0 });
 
@@ -57,7 +59,7 @@ const MapScreen = () => {
 
   const [state, setState] = useState({
     region: null,
-    markers: [],
+    markers: null,
     isMapReady: false,
     writeToiletModalVisible: false,
     preMarker: {},
@@ -84,10 +86,6 @@ const MapScreen = () => {
 
   const { title, description, latlng } = values;
 
-  const onRegionChange = event => {
-    // console.log(event);
-  };
-
   const _getToiletPointAsync = async () => {
     try {
       const res = await fetch('https://blochaid.io/api/toilets', {
@@ -99,20 +97,15 @@ const MapScreen = () => {
 
       const resJson = await res.json();
 
-      console.log(resJson);
-
       setState({ ...state, markers: resJson });
       // const target = { ...state, markers: [...resJson] };
       // setState({ ...target });
     } catch (error) {
       console.log(error);
     }
-    console.log('화장실 가져오기');
   };
 
   const writeToiletPoint = event => {
-    console.log(event.nativeEvent.coordinate);
-
     const coordinate = event.nativeEvent.coordinate;
 
     setState({
@@ -143,7 +136,6 @@ const MapScreen = () => {
         const resJson = await res.json();
 
         markers.push(resJson);
-        console.log(resJson);
 
         setState({
           ...state,
@@ -171,7 +163,6 @@ const MapScreen = () => {
         (Dimensions.get('window').width / Dimensions.get('window').height) *
         0.01
     };
-    console.log(region);
     setState({ ...state, region });
   };
 
@@ -234,23 +225,24 @@ const MapScreen = () => {
       <MapView
         // provider='google'
         style={{ flex: 1, marginBottom: marginBottom }}
-        // style={{ flex: 1 }}
         showsUserLocation={true}
         followsUserLocation={true}
         showsMyLocationButton={true}
         region={region}
-        // onRegionChange={onRegionChange}
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
       >
-        {markers.map(marker => (
-          <Marker
-            key={marker._id}
-            coordinate={marker.latlng}
-            title={marker.title}
-            description={marker.description}
-          />
-        ))}
+        {markers === null
+          ? null
+          : markers.map(marker => (
+              <Marker
+                key={marker._id}
+                coordinate={marker.latlng}
+                title={marker.title}
+                description={marker.description}
+                tracksViewChanges={false}
+              />
+            ))}
       </MapView>
       <View
         style={{
@@ -313,7 +305,17 @@ MapScreen.navigationOptions = {
   )
 };
 
-export default MapScreen;
+MapScreen.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  auth: state.auth,
+  props: ownProps
+});
+
+// export default MapScreen;
+export default connect(mapStateToProps)(MapScreen);
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
