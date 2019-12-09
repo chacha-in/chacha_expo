@@ -21,12 +21,8 @@ import * as Permissions from 'expo-permissions';
 const MapScreen = () => {
   useEffect(() => {
     _getLocationAsync();
-
     // setTimeout(() => {
-
-    //   // setTimeout(() => {
-    //   //   setState({ ...state, marginBottom: 0 });
-    //   // }, 100);
+    //   setState({ ...state, marginBottom: 0 });
     // }, 100);
   }, []);
 
@@ -53,8 +49,8 @@ const MapScreen = () => {
         0.01
     };
     console.log(region);
-    setState({ ...state, region });
-    // setState({ ...state, region, marginBottom: 0 });
+    // setState({ ...state, region });
+    setState({ ...state, region, marginBottom: 0 });
 
     _getToiletPointAsync();
   };
@@ -104,8 +100,10 @@ const MapScreen = () => {
       const resJson = await res.json();
 
       console.log(resJson);
-      const target = { ...state, markers: [...resJson] };
-      setState({ ...target });
+
+      setState({ ...state, markers: resJson });
+      // const target = { ...state, markers: [...resJson] };
+      // setState({ ...target });
     } catch (error) {
       console.log(error);
     }
@@ -184,7 +182,6 @@ const MapScreen = () => {
   return (markers === null) & (region === null) & (isMapReady === false) ? (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <ActivityIndicator size='large' />
-      <Text>가운데 왜 안오지</Text>
     </View>
   ) : (
     <View style={{ flex: 1 }}>
@@ -236,11 +233,11 @@ const MapScreen = () => {
 
       <MapView
         // provider='google'
-        // style={{ flex: 1, marginBottom: marginBottom }}
-        style={{ flex: 1 }}
+        style={{ flex: 1, marginBottom: marginBottom }}
+        // style={{ flex: 1 }}
         showsUserLocation={true}
-        // followsUserLocation={true}
-        // showsMyLocationButton={true}
+        followsUserLocation={true}
+        showsMyLocationButton={true}
         region={region}
         // onRegionChange={onRegionChange}
         onLongPress={writeToiletPoint}
@@ -258,7 +255,7 @@ const MapScreen = () => {
       <View
         style={{
           position: 'absolute', //use absolute position to show button on top of the map
-          bottom: '0%', //for center align
+          top: '0%', //for center align
           right: '0%',
           // alignSelf: 'flex-end', //for align to right
           margin: 17
@@ -281,40 +278,30 @@ const MapScreen = () => {
               }}
             />
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPressOut={goToCurrentLocation}
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'white',
-              borderRadius: 25,
-              width: 50,
-              height: 50
-            }}
-          >
-            <Icon
-              name='locate'
-              style={{
-                fontSize: 40,
-                color: 'gray'
-              }}
-            />
-          </TouchableOpacity>
-        )}
-        {/* <TouchableOpacity
-          onPressOut={goToCurrentLocation}
-          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-        >
-          <Icon
-            name='navigate'
-            style={{
-              fontSize: 58,
-              color: 'gray'
-            }}
-          />
-        </TouchableOpacity> */}
+        ) : null
+        // (
+        //   <TouchableOpacity
+        //     onPressOut={goToCurrentLocation}
+        //     style={{
+        //       flex: 1,
+        //       alignItems: 'center',
+        //       justifyContent: 'center',
+        //       backgroundColor: 'white',
+        //       borderRadius: 25,
+        //       width: 50,
+        //       height: 50
+        //     }}
+        //   >
+        //     <Icon
+        //       name='locate'
+        //       style={{
+        //         fontSize: 40,
+        //         color: 'gray'
+        //       }}
+        //     />
+        //   </TouchableOpacity>
+        // )
+        }
       </View>
     </View>
   );
