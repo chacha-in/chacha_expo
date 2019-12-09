@@ -51,8 +51,8 @@ const MapScreen = ({ props, auth }) => {
         0.01
     };
 
-    // setState({ ...state, region });
-    setState({ ...state, region, marginBottom: 0 });
+    setState({ ...state, region });
+    // setState({ ...state, region, marginBottom: 0 });
 
     _getToiletPointAsync();
   };
@@ -97,9 +97,9 @@ const MapScreen = ({ props, auth }) => {
 
       const resJson = await res.json();
 
-      setState({ ...state, markers: resJson });
-      // const target = { ...state, markers: [...resJson] };
-      // setState({ ...target });
+      // setState({ ...state, markers: [...resJson] });
+      const target = { ...state, markers: [...resJson] };
+      setState({ ...target });
     } catch (error) {
       console.log(error);
     }
@@ -155,15 +155,17 @@ const MapScreen = ({ props, auth }) => {
     const latitude = location.coords.latitude;
     const longitude = location.coords.longitude;
 
-    const region = {
-      latitude: latitude,
-      longitude: longitude,
-      latitudeDelta: 0.01,
-      longitudeDelta:
-        (Dimensions.get('window').width / Dimensions.get('window').height) *
-        0.01
-    };
-    setState({ ...state, region });
+    _mapView.animateToRegion(
+      {
+        latitude: latitude,
+        longitude: longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta:
+          (Dimensions.get('window').width / Dimensions.get('window').height) *
+          0.01
+      },
+      1000
+    );
   };
 
   const _onMapReady = () => {
@@ -221,13 +223,15 @@ const MapScreen = ({ props, auth }) => {
           </View>
         </View>
       </Modal>
-
       <MapView
         // provider='google'
+        ref={mapView => {
+          _mapView = mapView;
+        }}
         style={{ flex: 1, marginBottom: marginBottom }}
         showsUserLocation={true}
         followsUserLocation={true}
-        showsMyLocationButton={true}
+        // showsMyLocationButton={true}
         region={region}
         onLongPress={writeToiletPoint}
         onMapReady={_onMapReady}
@@ -270,30 +274,28 @@ const MapScreen = ({ props, auth }) => {
               }}
             />
           </TouchableOpacity>
-        ) : null
-        // (
-        //   <TouchableOpacity
-        //     onPressOut={goToCurrentLocation}
-        //     style={{
-        //       flex: 1,
-        //       alignItems: 'center',
-        //       justifyContent: 'center',
-        //       backgroundColor: 'white',
-        //       borderRadius: 25,
-        //       width: 50,
-        //       height: 50
-        //     }}
-        //   >
-        //     <Icon
-        //       name='locate'
-        //       style={{
-        //         fontSize: 40,
-        //         color: 'gray'
-        //       }}
-        //     />
-        //   </TouchableOpacity>
-        // )
-        }
+        ) : (
+          <TouchableOpacity
+            onPressOut={goToCurrentLocation}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'white',
+              borderRadius: 25,
+              width: 50,
+              height: 50
+            }}
+          >
+            <Icon
+              name='locate'
+              style={{
+                fontSize: 40,
+                color: 'gray'
+              }}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
