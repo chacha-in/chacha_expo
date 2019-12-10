@@ -4,6 +4,7 @@ import { setAlert } from './alert';
 import {
   GET_TOILETDETAIL_BY_ID,
   UPDATE_TOILETDETAIL_COMMENT,
+  DELETE_TOILETDETAIL_COMMENT,
   DELETE_TOILETDETAIL_REDUCER,
   TOILET_ERROR
 } from './types';
@@ -39,6 +40,10 @@ export const getToiletById = _id => async dispatch => {
 
 // Update toilet by id
 export const updateToiletComment = comments => async dispatch => {
-  console.log('액션 들어오니?');
   dispatch({ type: UPDATE_TOILETDETAIL_COMMENT, payload: comments });
+};
+
+// Delete toilet by id
+export const deleteToiletComment = toiletDetail => async dispatch => {
+  dispatch({ type: DELETE_TOILETDETAIL_COMMENT, payload: toiletDetail });
 };

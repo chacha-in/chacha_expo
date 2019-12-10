@@ -2,7 +2,8 @@ import {
   GET_TOILETDETAIL_BY_ID,
   DELETE_TOILETDETAIL_REDUCER,
   TOILET_ERROR,
-  UPDATE_TOILETDETAIL_COMMENT
+  UPDATE_TOILETDETAIL_COMMENT,
+  DELETE_TOILETDETAIL_COMMENT
 } from '../actions/types';
 
 const initialState = {
@@ -16,6 +17,7 @@ export default (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
     case GET_TOILETDETAIL_BY_ID:
+    case DELETE_TOILETDETAIL_COMMENT:
       return {
         ...state,
         toiletDetail: payload,

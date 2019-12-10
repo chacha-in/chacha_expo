@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { updateToiletComment } from '../actions/toilet';
+import { updateToiletComment, deleteToiletComment } from '../actions/toilet';
 
 import {
   View,
@@ -24,12 +24,17 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 const ToiletDetail = ({
   props,
   updateToiletComment,
+  deleteToiletComment,
   auth,
   toilet: { toiletDetail, loading }
 }) => {
   const [comment, setComment] = useState('');
 
   const saveComment = async () => {
+    if (comment === '') {
+      return;
+    }
+
     const userToken = await AsyncStorage.getItem('userToken');
 
     const _id = toiletDetail._id;
@@ -52,6 +57,32 @@ const ToiletDetail = ({
 
       updateToiletComment(resJson);
       setComment('');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeComment = async commentId => {
+    const userToken = await AsyncStorage.getItem('userToken');
+
+    const _id = toiletDetail._id;
+
+    try {
+      const res = await fetch(
+        `https://blochaid.io/api/toilets/comment/${_id}/${commentId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'x-auth-token': userToken
+          }
+        }
+      );
+
+      const resJson = await res.json();
+
+      deleteToiletComment(resJson);
     } catch (error) {
       console.log(error);
     }
@@ -116,21 +147,24 @@ const ToiletDetail = ({
           </View>
           <View style={{ width: '80%', height: 200 }}>
             <ScrollView>
-              {toiletDetail.comments &&
-                toiletDetail.comments.map(comment => (
-                  <Text key={comment._id}>
-                    <Text style={{ fontWeight: 'bold' }}>
-                      {comment.username}
-                    </Text>{' '}
-                    {comment.text}{' '}
-                    <FontAwesomeIcon
-                      style={{ alignSelf: 'flex-end' }}
-                      name='backspace'
-                      size={17}
-                      color='#ff4d4d'
-                    />
-                  </Text>
-                ))}
+              <TouchableOpacity>
+                {toiletDetail.comments &&
+                  toiletDetail.comments.map(comment => (
+                    <Text key={comment._id}>
+                      <Text style={{ fontWeight: 'bold' }}>
+                        {comment.username}
+                      </Text>{' '}
+                      {comment.text}{' '}
+                      <FontAwesomeIcon
+                        onPress={() => removeComment(comment._id)}
+                        style={{ alignSelf: 'flex-end' }}
+                        name='backspace'
+                        size={17}
+                        color='#ff4d4d'
+                      />
+                    </Text>
+                  ))}
+              </TouchableOpacity>
             </ScrollView>
           </View>
 
@@ -176,7 +210,10 @@ const mapStateToProps = (state, ownProps) => ({
   props: ownProps
 });
 
-export default connect(mapStateToProps, { updateToiletComment })(ToiletDetail);
+export default connect(mapStateToProps, {
+  updateToiletComment,
+  deleteToiletComment
+})(ToiletDetail);
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
