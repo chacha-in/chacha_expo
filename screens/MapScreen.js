@@ -13,16 +13,20 @@ import {
   AsyncStorage,
   ActivityIndicator,
   TouchableOpacity,
-  Picker
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
+
 import { Icon, Button } from 'native-base';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
+import { getToiletById } from '../actions/toilet';
+
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
-const MapScreen = ({ props, auth }) => {
+const MapScreen = ({ getToiletById, props, auth }) => {
   useEffect(() => {
     _getLocationAsync();
     // setTimeout(() => {
@@ -79,6 +83,9 @@ const MapScreen = ({ props, auth }) => {
     diaperChangingTable: false,
     checked: 'both'
   });
+
+  const [toiletDetail, setToiletDetail] = useState(null);
+  const [isLoadingToiletDetail, setIsLoadingToiletDetail] = useState(false);
 
   const {
     region,
@@ -183,6 +190,27 @@ const MapScreen = ({ props, auth }) => {
     );
   };
 
+  const viewToiletDetail = async id => {
+    const userToken = await AsyncStorage.getItem('userToken');
+
+    try {
+      const res = await fetch(`https://blochaid.io/api/toilets/${id}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'x-auth-token': userToken
+        }
+      });
+
+      const resJson = await res.json();
+
+      setToiletDetail(resJson);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoadingToiletDetail(true);
+  };
+
   const _onMapReady = () => {
     setState({ ...state, isMapReady: true });
   };
@@ -201,139 +229,149 @@ const MapScreen = ({ props, auth }) => {
           Alert.alert('Modal has been closed.');
         }}
       >
-        <View style={styles.container}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.title}>화장실 등록</Text>
-            <TextInput
-              value={title}
-              onChangeText={title => setValues({ ...values, title })}
-              placeholder={'화장실 이름을 입력해주세요'}
-              style={styles.input}
-            />
-            <View style={{ width: 250, marginBottom: 10 }}>
-              <TouchableOpacity
-                style={styles.selectBoxContainer}
-                onPressOut={() =>
-                  setValues({ ...values, sex: 'both', checked: 'both' })
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Keyboard.dismiss();
+          }}
+        >
+          <View style={styles.container}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.title}></Text>
+              <TextInput
+                value={title}
+                onChangeText={title => setValues({ ...values, title })}
+                placeholder={'화장실 이름을 입력해주세요'}
+                style={styles.input}
+              />
+              <View style={{ width: 250, marginBottom: 10 }}>
+                <TouchableOpacity
+                  style={styles.selectBoxContainer}
+                  onPressOut={() =>
+                    setValues({ ...values, sex: 'both', checked: 'both' })
+                  }
+                >
+                  <Text>남녀 화장실 모두 있어요</Text>
+                  {values.checked === 'both' ? (
+                    <Icon
+                      name='checkmark-circle-outline'
+                      style={styles.selectIcon}
+                    />
+                  ) : (
+                    <Text></Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.selectBoxContainer}
+                  onPressOut={() =>
+                    setValues({
+                      ...values,
+                      sex: 'femaleOnly',
+                      checked: 'femaleOnly'
+                    })
+                  }
+                >
+                  <Text>여자 화장실만 있어요</Text>
+                  {values.checked === 'femaleOnly' ? (
+                    <Icon
+                      name='checkmark-circle-outline'
+                      style={styles.selectIcon}
+                    />
+                  ) : (
+                    <Text></Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.selectBoxContainer}
+                  onPressOut={() =>
+                    setValues({
+                      ...values,
+                      sex: 'maleOnly',
+                      checked: 'maleOnly'
+                    })
+                  }
+                >
+                  <Text>남자 화장실만 있어요</Text>
+                  {values.checked === 'maleOnly' ? (
+                    <Icon
+                      name='checkmark-circle-outline'
+                      style={styles.selectIcon}
+                    />
+                  ) : (
+                    <Text></Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.selectBoxContainer}
+                  onPressOut={() =>
+                    setValues({
+                      ...values,
+                      forDisabled: !values.forDisabled
+                    })
+                  }
+                >
+                  <Text>장애인 화장실 있어요</Text>
+                  {values.forDisabled ? (
+                    <Icon
+                      name='checkmark-circle-outline'
+                      style={styles.selectIcon}
+                    />
+                  ) : (
+                    <Text></Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.selectBoxContainer}
+                  onPressOut={() =>
+                    setValues({
+                      ...values,
+                      diaperChangingTable: !values.diaperChangingTable
+                    })
+                  }
+                >
+                  <Text>기저귀 거치대 있어요</Text>
+                  {values.diaperChangingTable ? (
+                    <Icon
+                      name='checkmark-circle-outline'
+                      style={styles.selectIcon}
+                    />
+                  ) : (
+                    <Text></Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                multiline={true}
+                numberOfLines={6}
+                value={description}
+                onChangeText={description =>
+                  setValues({ ...values, description })
                 }
-              >
-                <Text>남녀 화장실 모두 있어요</Text>
-                {values.checked === 'both' ? (
-                  <Icon
-                    name='checkmark-circle-outline'
-                    style={styles.selectIcon}
-                  />
-                ) : (
-                  <Text></Text>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.selectBoxContainer}
-                onPressOut={() =>
-                  setValues({
-                    ...values,
-                    sex: 'femaleOnly',
-                    checked: 'femaleOnly'
-                  })
-                }
-              >
-                <Text>여자 화장실만 있어요</Text>
-                {values.checked === 'femaleOnly' ? (
-                  <Icon
-                    name='checkmark-circle-outline'
-                    style={styles.selectIcon}
-                  />
-                ) : (
-                  <Text></Text>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.selectBoxContainer}
-                onPressOut={() =>
-                  setValues({
-                    ...values,
-                    sex: 'maleOnly',
-                    checked: 'maleOnly'
-                  })
-                }
-              >
-                <Text>남자 화장실만 있어요</Text>
-                {values.checked === 'maleOnly' ? (
-                  <Icon
-                    name='checkmark-circle-outline'
-                    style={styles.selectIcon}
-                  />
-                ) : (
-                  <Text></Text>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.selectBoxContainer}
-                onPressOut={() =>
-                  setValues({
-                    ...values,
-                    forDisabled: !values.forDisabled
-                  })
-                }
-              >
-                <Text>장애인 화장실 있어요</Text>
-                {values.forDisabled ? (
-                  <Icon
-                    name='checkmark-circle-outline'
-                    style={styles.selectIcon}
-                  />
-                ) : (
-                  <Text></Text>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.selectBoxContainer}
-                onPressOut={() =>
-                  setValues({
-                    ...values,
-                    diaperChangingTable: !values.diaperChangingTable
-                  })
-                }
-              >
-                <Text>기저귀 거치대 있어요</Text>
-                {values.diaperChangingTable ? (
-                  <Icon
-                    name='checkmark-circle-outline'
-                    style={styles.selectIcon}
-                  />
-                ) : (
-                  <Text></Text>
-                )}
-              </TouchableOpacity>
+                placeholder={'자세한 정보를 알려주세요'}
+                style={styles.multilineInput}
+              />
             </View>
-            <TextInput
-              multiline={true}
-              numberOfLines={6}
-              value={description}
-              onChangeText={description =>
-                setValues({ ...values, description })
-              }
-              placeholder={'자세한 정보를 알려주세요'}
-              style={styles.multilineInput}
-            />
+            <View style={{ width: 280 }}>
+              <Button block info onPressOut={saveToiletPoint}>
+                <Text style={{ color: 'white', fontSize: 18 }}>등록</Text>
+              </Button>
+              <Button
+                full
+                transparent
+                onPressOut={() => {
+                  setState({ ...state, writeToiletModalVisible: false });
+                  setValues({ title: '', description: '' });
+                }}
+              >
+                <Text style={{ color: 'gray' }}>취소</Text>
+              </Button>
+            </View>
           </View>
-          <View style={{ width: 280 }}>
-            <Button block info onPressOut={saveToiletPoint}>
-              <Text style={{ color: 'white', fontSize: 18 }}>등록</Text>
-            </Button>
-            <Button
-              full
-              transparent
-              onPressOut={() => {
-                setState({ ...state, writeToiletModalVisible: false });
-                setValues({ title: '', description: '' });
-              }}
-            >
-              <Text style={{ color: 'gray' }}>취소</Text>
-            </Button>
-          </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
+
+      {/* 상세 페이지 */}
+
+      {/* 지도 */}
       <MapView
         // provider='google'
         ref={mapView => {
@@ -358,7 +396,12 @@ const MapScreen = ({ props, auth }) => {
                 tracksViewChanges={false}
                 // onCalloutPress={() => console.log(marker.title)}
               >
-                <Callout onPress={() => console.log(marker.title)}>
+                <Callout
+                  onPress={() => {
+                    getToiletById(marker._id);
+                    props.screenProps.navigation.navigate('ToiletDetail');
+                  }}
+                >
                   <Text>{marker.title}</Text>
                   <View
                     style={{ flexDirection: 'row', justifyContent: 'center' }}
@@ -444,7 +487,11 @@ const MapScreen = ({ props, auth }) => {
         {Platform.OS === 'ios' ? (
           <TouchableOpacity
             onPressOut={goToCurrentLocation}
-            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
           >
             <Icon
               name='navigate'
@@ -497,11 +544,11 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 // export default MapScreen;
-export default connect(mapStateToProps)(MapScreen);
+export default connect(mapStateToProps, { getToiletById })(MapScreen);
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center' },
-  title: { margin: 10, fontSize: 20 },
+  title: { margin: 5, fontSize: 17 },
   inputContainer: {
     alignItems: 'center',
     marginBottom: 20,

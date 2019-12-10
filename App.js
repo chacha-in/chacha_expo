@@ -9,6 +9,7 @@ import MainScreen from './screens/MainScreen';
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import AuthLoadingScreen from './screens/AuthLoadingScreen';
+import ToiletDetailScreen from './screens/ToiletDetailScreen';
 
 // Redux
 import { Provider } from 'react-redux';
@@ -54,7 +55,8 @@ const AppStackNavigator = createAppContainer(
     {
       AuthLoading: AuthLoadingScreen,
       App: AppStack,
-      Auth: AuthStack
+      Auth: AuthStack,
+      ToiletDetail: ToiletDetailScreen
     },
     {
       initialRouteName: 'AuthLoading'
