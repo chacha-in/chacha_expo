@@ -16,7 +16,8 @@ import {
   Keyboard,
   TouchableOpacity,
   ScrollView,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 
 import { Button } from 'native-base';
@@ -166,10 +167,10 @@ const ToiletDetail = ({
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior='position'
-        keyboardVerticalOffset={50}
-        enabled
+        keyboardVerticalOffset={Platform.select({ ios: 50, android: 65 })}
+        // enabled
       >
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <View style={{ backgroundColor: 'white' }}>
           <View style={{ flexDirection: 'row' }}>
             <TextInput
               value={comment}
