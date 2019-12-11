@@ -15,7 +15,8 @@ import {
   TextInput,
   Keyboard,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView
 } from 'react-native';
 
 import { Button } from 'native-base';
@@ -93,110 +94,111 @@ const ToiletDetail = ({
       <ActivityIndicator size='large' />
     </View>
   ) : (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.title}>{toiletDetail.title}</Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-            {toiletDetail.sex === 'both' ? (
-              <>
-                <FontAwesomeIcon name='female' size={35} color='#ff4d4d' />
-                <Text> </Text>
-                <FontAwesomeIcon name='male' size={35} color='#3366ff' />
-              </>
-            ) : null}
+    <View style={styles.container}>
+      <View style={{ flex: 1, marginBottom: 40 }}>
+        <Text style={styles.title}>{toiletDetail.title}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          {toiletDetail.sex === 'both' ? (
+            <>
+              <FontAwesomeIcon name='female' size={40} color='#ff4d4d' />
+              <Text> </Text>
+              <FontAwesomeIcon name='male' size={40} color='#3366ff' />
+            </>
+          ) : null}
 
-            {toiletDetail.sex === 'maleOnly' ? (
-              <>
-                <FontAwesomeIcon name='male' size={35} color='#3366ff' />
-              </>
-            ) : null}
+          {toiletDetail.sex === 'maleOnly' ? (
+            <>
+              <FontAwesomeIcon name='male' size={40} color='#3366ff' />
+            </>
+          ) : null}
 
-            {toiletDetail.sex === 'femaleOnly' ? (
-              <>
-                <FontAwesomeIcon name='female' size={35} color='#ff4d4d' />
-              </>
-            ) : null}
-            {toiletDetail.forDisabled === true ? (
-              <>
-                <Text>{'       '}</Text>
+          {toiletDetail.sex === 'femaleOnly' ? (
+            <>
+              <FontAwesomeIcon name='female' size={40} color='#ff4d4d' />
+            </>
+          ) : null}
+          {toiletDetail.forDisabled === true ? (
+            <>
+              <Text>{'       '}</Text>
+              <FontAwesomeIcon
+                style={{ alignSelf: 'flex-end' }}
+                name='wheelchair'
+                size={40}
+                color='#39ac73'
+              />
+            </>
+          ) : null}
+          {toiletDetail.diaperChangingTable === true ? (
+            <>
+              <Text>{'      '}</Text>
+              <FontAwesomeIcon
+                style={{ alignSelf: 'flex-end' }}
+                name='baby'
+                size={40}
+                color='#666699'
+              />
+            </>
+          ) : null}
+        </View>
+      </View>
+
+      {/* 댓글 리스트 */}
+      <View style={{ flex: 7, width: 300 }}>
+        <ScrollView>
+          {toiletDetail.comments &&
+            toiletDetail.comments.map(comment => (
+              <Text key={comment._id}>
+                <Text style={{ fontWeight: 'bold' }}>{comment.username}</Text>{' '}
+                {comment.text}{' '}
                 <FontAwesomeIcon
+                  onPress={() => removeComment(comment._id)}
                   style={{ alignSelf: 'flex-end' }}
-                  name='wheelchair'
-                  size={33}
-                  color='#39ac73'
+                  name='backspace'
+                  size={17}
+                  color='#ff4d4d'
                 />
-              </>
-            ) : null}
-            {toiletDetail.diaperChangingTable === true ? (
-              <>
-                <Text>{'      '}</Text>
-                <FontAwesomeIcon
-                  style={{ alignSelf: 'flex-end' }}
-                  name='baby'
-                  size={34}
-                  color='#666699'
-                />
-              </>
-            ) : null}
-            {/* 댓글 리스트 */}
-          </View>
-          <View style={{ width: '80%', height: 200 }}>
-            <ScrollView>
-              <TouchableOpacity>
-                {toiletDetail.comments &&
-                  toiletDetail.comments.map(comment => (
-                    <Text key={comment._id}>
-                      <Text style={{ fontWeight: 'bold' }}>
-                        {comment.username}
-                      </Text>{' '}
-                      {comment.text}{' '}
-                      <FontAwesomeIcon
-                        onPress={() => removeComment(comment._id)}
-                        style={{ alignSelf: 'flex-end' }}
-                        name='backspace'
-                        size={17}
-                        color='#ff4d4d'
-                      />
-                    </Text>
-                  ))}
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
+              </Text>
+            ))}
+        </ScrollView>
+      </View>
 
-          {/* 화장실 정보 표시 */}
-
-          {/* 댓글 작성 */}
+      {/* 댓글 작성 */}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior='position'
+        keyboardVerticalOffset={50}
+        enabled
+      >
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
           <View style={{ flexDirection: 'row' }}>
             <TextInput
               value={comment}
               onChangeText={comment => setComment(comment)}
-              placeholder={'댓글 입력'}
+              placeholder={'이 화장실에 대해 얘기해주세요'}
               style={styles.input}
             />
             <TouchableOpacity
               onPressOut={() => saveComment()}
-              style={{ justifyContent: 'flex-end', marginBottom: 13 }}
+              style={{ justifyContent: 'flex-end', marginBottom: 10 }}
             >
               <FontAwesomeIcon name='paper-plane' size={28} color='gray' />
             </TouchableOpacity>
           </View>
+
+          <View>
+            <Button
+              full
+              transparent
+              onPressOut={() => props.navigation.navigate('App')}
+            >
+              <Text style={{ fontSize: 16, color: 'gray' }}>
+                지도로 돌아가기
+              </Text>
+            </Button>
+          </View>
         </View>
-        <View style={{ width: 280 }}>
-          <Button
-            full
-            transparent
-            onPressOut={() => props.navigation.navigate('App')}
-          >
-            <Text style={{ color: 'gray' }}>지도로 돌아갈게요</Text>
-          </Button>
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -216,38 +218,21 @@ export default connect(mapStateToProps, {
 })(ToiletDetail);
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center' },
-  title: { margin: 5, fontSize: 17 },
-  inputContainer: {
+  container: {
+    flex: 1,
+
     alignItems: 'center',
+    marginTop: 50,
     marginBottom: 20,
-    marginTop: 40
+    paddingBottom: 20
   },
+  title: { margin: 5, fontSize: 25, fontWeight: 'bold' },
   input: {
-    width: 280,
+    width: 320,
     height: 44,
-    padding: 10,
-    marginBottom: 10,
+    // padding: 10,
+
     borderBottomWidth: 1,
     borderColor: 'gray'
-  },
-  multilineInput: {
-    textAlignVertical: 'top',
-    width: 280,
-    height: 120,
-    padding: 10,
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderColor: 'gray'
-  },
-  selectBoxContainer: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    height: 35
-  },
-  selectIcon: {
-    fontSize: 25,
-    color: 'green'
   }
 });

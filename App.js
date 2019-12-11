@@ -35,16 +35,7 @@ const App = () => {
 const AppStack = createStackNavigator({
   MainScreen: MainScreen
 });
-// const AppStack = createStackNavigator(
-//   {
-//     Home: HomeScreen,
-//     MapScreen: MapScreen,
-//     Profile: ProfileScreen
-//   },
-//   {
-//     initialRouteName: 'Profile'
-//   }
-// );
+
 const AuthStack = createStackNavigator({
   SignIn: SignInScreen,
   SignUp: SignUpScreen
