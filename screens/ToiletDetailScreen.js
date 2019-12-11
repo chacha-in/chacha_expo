@@ -27,7 +27,7 @@ const ToiletDetail = ({
   props,
   updateToiletComment,
   deleteToiletComment,
-  auth,
+  auth: { user },
   toilet: { toiletDetail, loading }
 }) => {
   const [comment, setComment] = useState('');
@@ -96,7 +96,7 @@ const ToiletDetail = ({
     </View>
   ) : (
     <View style={styles.container}>
-      <View style={{ flex: 1, marginBottom: 40 }}>
+      <View style={{ flex: 1, marginBottom: 60 }}>
         <Text style={styles.title}>{toiletDetail.title}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           {toiletDetail.sex === 'both' ? (
@@ -151,13 +151,15 @@ const ToiletDetail = ({
               <Text key={comment._id}>
                 <Text style={{ fontWeight: 'bold' }}>{comment.username}</Text>{' '}
                 {comment.text}{' '}
-                <FontAwesomeIcon
-                  onPress={() => removeComment(comment._id)}
-                  style={{ alignSelf: 'flex-end' }}
-                  name='backspace'
-                  size={17}
-                  color='#ff4d4d'
-                />
+                {comment.user === user._id ? (
+                  <FontAwesomeIcon
+                    onPress={() => removeComment(comment._id)}
+                    style={{ alignSelf: 'flex-end' }}
+                    name='backspace'
+                    size={17}
+                    color='#ff4d4d'
+                  />
+                ) : null}
               </Text>
             ))}
         </ScrollView>
@@ -166,7 +168,7 @@ const ToiletDetail = ({
       {/* 댓글 작성 */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior='position'
+        behavior='padding'
         keyboardVerticalOffset={Platform.select({ ios: 50, android: 65 })}
         // enabled
       >
