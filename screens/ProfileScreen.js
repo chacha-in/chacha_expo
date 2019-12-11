@@ -27,9 +27,9 @@ const ProfileScreen = ({ props, auth: { user, loading, authenticated } }) => {
     <ActivityIndicator />
   ) : (
     <View style={styles.container}>
-      <Text>사용자 : {user.username}</Text>
-      <Text>이메일 : {user.email}</Text>
-      <Button title='Actually, sign me out :)' onPress={_signOutAsync} />
+      <Text style={styles.text}>사용자 : {user.username}</Text>
+      <Text style={styles.text}>이메일 : {user.email}</Text>
+      <Button title='다음에 또 만나요' onPress={_signOutAsync} />
     </View>
   );
 };
@@ -68,5 +68,8 @@ const styles = StyleSheet.create({
     width: 30,
     borderWidth: 1,
     borderRadius: 15
+  },
+  text: {
+    marginBottom: 10
   }
 });
