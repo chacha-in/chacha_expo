@@ -207,13 +207,13 @@ const mapStateToProps = state => ({
   post: state.post
 });
 
-export default connect(mapStateToProps, { getPosts, refreshPosts })(HomeScreen);
-
 HomeScreen.navigationOptions = {
   tabBarIcon: ({ tintColor }) => (
     <Icon name='home' style={{ color: tintColor }} />
   )
 };
+
+export default connect(mapStateToProps, { getPosts, refreshPosts })(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {
