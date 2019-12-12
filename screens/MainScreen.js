@@ -57,7 +57,7 @@ const MainScreen = props => {
 };
 
 MainScreen.navigationOptions = {
-  title: '차차'
+  title: '배탈의 민족'
 };
 export default MainScreen;
 

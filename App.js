@@ -19,9 +19,9 @@ import { loadUser } from './actions/auth';
 const App = () => {
   useEffect(() => {
     store.dispatch(loadUser());
-    // Font.loadAsync({
-    //   Jalnan: require('./assets/fonts/Jalnan.ttf')
-    // });
+    Font.loadAsync({
+      bm: require('./assets/fonts/BMEULJIROTTF.ttf')
+    });
   }, []);
   return (
     <Provider store={store}>
