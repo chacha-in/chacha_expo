@@ -8,35 +8,42 @@ import {
   ADD_COMMENT,
   REMOVE_COMMENT,
   ADD_POST_STANDBY,
-  GET_POSTS_BY_TAG,
-  GET_POSTS_BY_ID
-} from "../actions/types";
+  GET_POSTS_BY_ID,
+  REFRESH_POSTS
+} from '../actions/types';
 
 const initialState = {
   posts: [],
   post: null,
+  page: 1,
+  refreshing: false,
   loading: true,
-  standby: {},
   error: {}
 };
 
 export default (state = initialState, action) => {
-  const { type, payload } = action;
+  const { type, payload, page, refreshing } = action;
 
   switch (type) {
     case GET_POSTS:
-    case GET_POSTS_BY_TAG:
     case GET_POSTS_BY_ID:
       return {
         ...state,
         posts: payload,
-        loading: false
+        page: page,
+        loading: false,
+        refreshing: false
       };
     case GET_POST:
       return {
         ...state,
         post: payload,
         loading: false
+      };
+    case REFRESH_POSTS:
+      return {
+        ...state,
+        refreshing: true
       };
     case ADD_POST:
       return {
@@ -45,8 +52,6 @@ export default (state = initialState, action) => {
         loading: false,
         standby: {}
       };
-    case ADD_POST_STANDBY:
-      return { ...state, standby: payload };
     case DELETE_POST:
       return {
         ...state,
@@ -78,19 +83,6 @@ export default (state = initialState, action) => {
         ),
         loading: false
       };
-
-    // case REMOVE_COMMENT:
-    //   return {
-    //     ...state,
-    //     post: {
-    //       ...state.post,
-    //       comments: state.post.comments.filter(
-    //         comment => comment._id !== payload
-    //       )
-    //     },
-    //     loading: false
-    //   };
-
     case REMOVE_COMMENT:
       return {
         ...state,

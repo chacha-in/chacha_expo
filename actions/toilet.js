@@ -11,7 +11,6 @@ import {
 
 // Get toilet by id
 export const getToiletById = _id => async dispatch => {
-  console.log('액션 들어옴', _id);
   dispatch({ type: DELETE_TOILETDETAIL_REDUCER });
   const userToken = await AsyncStorage.getItem('userToken');
 

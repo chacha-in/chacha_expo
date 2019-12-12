@@ -23,8 +23,6 @@ export const loadUser = () => async dispatch => {
       }
     });
 
-    console.log(res);
-
     const resJson = await res.json();
 
     dispatch({

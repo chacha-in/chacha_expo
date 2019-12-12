@@ -13,11 +13,7 @@ import {
 import { Icon } from 'native-base';
 
 const ProfileScreen = ({ props, auth: { user, loading, authenticated } }) => {
-  console.log('profile screen 진입');
-
   const _signOutAsync = async () => {
-    console.log('signout');
-    console.log(props);
     await AsyncStorage.clear();
 
     props.screenProps.navigation.navigate('Auth');

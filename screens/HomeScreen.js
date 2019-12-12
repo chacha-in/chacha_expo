@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { getPosts, refreshPosts } from '../actions/post';
+
 import {
   View,
   Text,
@@ -14,16 +18,18 @@ import {
 import { Icon, Button } from 'native-base';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 
-const HomeScreen = () => {
+const HomeScreen = ({
+  auth: { user },
+  post: { posts, page, refreshing },
+  getPosts,
+  refreshPosts
+}) => {
   useEffect(() => {
-    _getData();
+    getPosts();
   }, []);
 
-  const [data, setData] = useState('');
-  const [page, setPage] = useState(1);
-  const [refreshing, setRefreshing] = useState(false);
+  // const [refreshing, setRefreshing] = useState(false);
   const [writePostModal, setWritePostModal] = useState(false);
-  const [stopLoad, setStopLoad] = useState(false);
 
   const [values, setValues] = useState({
     title: '',
@@ -47,50 +53,9 @@ const HomeScreen = () => {
     </View>
   );
 
-  const _getData = async () => {
-    try {
-      const res = await fetch(`https://blochaid.io/api/posts/page/${page}`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json'
-        }
-      });
-
-      const resJson = await res.json();
-      console.log(resJson);
-      if (resJson === null || resJson.length === 0) {
-        setPage(page);
-        setRefreshing(false);
-        return;
-      }
-
-      setData(refreshing ? resJson : [...data, ...resJson]);
-      setPage(page + 1);
-      setRefreshing(false);
-    } catch (error) {
-      console.log(error);
-    }
-
-    // const url =
-    //   'https://jsonplaceholder.typicode.com/photos?_limit=10&_page=' + page;
-    // fetch(url)
-    //   .then(res => res.json())
-    //   .then(json => {
-    //     setData(refreshing ? json : json.concat(data));
-    //     setPage(page + 1);
-    //     setRefreshing(false);
-    //   });
-  };
-
-  const _handleLoadMore = () => {
-    _getData();
-  };
-
   const _handleRefresh = () => {
     setRefreshing(true);
-    setPage(1);
-
-    _getData();
+    getPosts();
   };
 
   const writePost = async () => {
@@ -174,13 +139,13 @@ const HomeScreen = () => {
       <View style={{ flex: 9 }}>
         <View style={{ flex: 12 }}>
           <FlatList
-            data={data}
+            data={posts}
             renderItem={_renderItem}
             keyExtractor={item => item._id}
-            onEndReached={_handleLoadMore}
+            onEndReached={() => getPosts(page, posts)}
             onEndReachedThreshold={1}
             refreshing={refreshing}
-            onRefresh={_handleRefresh}
+            onRefresh={getPosts}
           />
         </View>
         <View style={{ flex: 1 }}>
@@ -238,7 +203,17 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+HomeScreen.propTypes = {
+  auth: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  post: state.post
+});
+
+export default connect(mapStateToProps, { getPosts, refreshPosts })(HomeScreen);
 
 HomeScreen.navigationOptions = {
   tabBarIcon: ({ tintColor }) => (

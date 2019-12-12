@@ -3,12 +3,12 @@ import alert from './alert';
 import auth from './auth';
 import profile from './profile';
 import toilet from './toilet';
-// import post from "./post";
+import post from './post';
 
 export default combineReducers({
   alert,
   auth,
-  toilet
+  toilet,
   // profile
-  // post,
+  post
 });
