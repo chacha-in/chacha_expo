@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { logout } from '../actions/auth';
 
 import {
   View,
@@ -12,14 +13,19 @@ import {
 } from 'react-native';
 import { Icon } from 'native-base';
 
-const ProfileScreen = ({ props, auth: { user, loading, authenticated } }) => {
+const ProfileScreen = ({
+  props,
+  logout,
+  auth: { user, loading, authenticated }
+}) => {
   const _signOutAsync = async () => {
-    await AsyncStorage.clear();
+    // await AsyncStorage.clear();
+    logout();
 
     props.screenProps.navigation.navigate('Auth');
   };
 
-  return loading === null ? (
+  return loading ? (
     <ActivityIndicator />
   ) : (
     <View style={styles.container}>
@@ -47,7 +53,7 @@ ProfileScreen.navigationOptions = {
 };
 
 // export default ProfileScreen;
-export default connect(mapStateToProps)(ProfileScreen);
+export default connect(mapStateToProps, { logout })(ProfileScreen);
 
 // ProfileScreen.navigationOptions = {
 //   title: 'CHACHA'

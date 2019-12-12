@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Platform, Text } from 'react-native';
 import { Icon } from 'native-base';
 
@@ -9,6 +9,9 @@ import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import HomeScreen from './HomeScreen';
 import MapScreen from './MapScreen';
 import ProfileScreen from './ProfileScreen';
+
+import store from '../store';
+import { loadUser } from '../actions/auth';
 
 // 하단 탭 네비게이터 생성
 const AppTabNavigator = createMaterialTopTabNavigator(
@@ -47,6 +50,9 @@ const AppTabNavigator = createMaterialTopTabNavigator(
 const AppTabContainet = createAppContainer(AppTabNavigator);
 
 const MainScreen = props => {
+  useEffect(() => {
+    store.dispatch(loadUser());
+  }, []);
   return <AppTabContainet screenProps={props} style={{ flex: 1 }} />;
 };
 

@@ -9,6 +9,9 @@ import {
   View
 } from 'react-native';
 
+import store from '../store';
+import { loadUser } from '../actions/auth';
+
 const AuthLoadingScreen = ({ props, auth: { isAuthenticated, loading } }) => {
   useEffect(() => {
     _bootstrapAsync();
