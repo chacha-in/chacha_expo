@@ -4,7 +4,7 @@ import {
   UPDATE_LIKES,
   DELETE_POST,
   ADD_POST,
-  GET_POST,
+  GET_POSTDETAIL,
   ADD_COMMENT,
   REMOVE_COMMENT,
   ADD_POST_STANDBY,
@@ -13,7 +13,7 @@ import {
 
 const initialState = {
   posts: [],
-  post: null,
+  postDetail: null,
   page: 1,
   refreshing: false,
   loading: true,
@@ -33,13 +33,12 @@ export default (state = initialState, action) => {
         loading: false,
         refreshing: false
       };
-    case GET_POST:
+    case GET_POSTDETAIL:
       return {
         ...state,
-        post: payload,
+        postDetail: payload,
         loading: false
       };
-
     case ADD_POST:
       return {
         ...state,

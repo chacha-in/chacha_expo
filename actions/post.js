@@ -5,7 +5,7 @@ import {
   UPDATE_LIKES,
   DELETE_POST,
   ADD_POST,
-  GET_POST,
+  GET_POSTDETAIL,
   ADD_COMMENT,
   REMOVE_COMMENT,
   ADD_POST_STANDBY,
@@ -171,13 +171,12 @@ export const addPost = formData => async dispatch => {
 };
 
 // Get post
-export const getPost = id => async dispatch => {
+export const _getPostDetail = post => async dispatch => {
+  console.log('액션들어옴');
   try {
-    const res = await axios.get(`/api/posts/${id}`);
-
     dispatch({
-      type: GET_POST,
-      payload: res.data
+      type: GET_POSTDETAIL,
+      payload: post[0]
     });
   } catch (err) {
     dispatch({

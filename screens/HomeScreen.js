@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getPosts, refreshPosts } from '../actions/post';
+import { getPosts, refreshPosts, _getPostDetail } from '../actions/post';
 
 import {
   View,
@@ -20,9 +20,11 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 
 const HomeScreen = ({
   auth: { user },
-  post: { posts, page, refreshing },
+  post: { posts, page, refreshing, postDetail },
   getPosts,
-  refreshPosts
+  refreshPosts,
+  _getPostDetail,
+  props
 }) => {
   useEffect(() => {
     getPosts();
@@ -45,6 +47,11 @@ const HomeScreen = ({
       }}
     >
       <TouchableOpacity
+        onPressOut={() => {
+          const selectedPost = posts.filter(post => post._id === item._id);
+          _getPostDetail(selectedPost);
+          props.screenProps.navigation.navigate('PostDetail');
+        }}
         style={{ width: '100%', height: '100%', justifyContent: 'center' }}
       >
         <View
@@ -59,6 +66,15 @@ const HomeScreen = ({
       </TouchableOpacity>
     </View>
   );
+
+  const getPostDetail = async id => {
+    try {
+      const selectedPost = posts.filter(post => post._id === id);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsPostDetailModal(true);
+  };
 
   const writePost = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
@@ -92,7 +108,7 @@ const HomeScreen = ({
   return (
     <View style={styles.container}>
       <Modal
-        animationType='slide'
+        animationType='fade'
         transparent={false}
         visible={writePostModal}
         onRequestClose={() => {
@@ -215,9 +231,10 @@ HomeScreen.propTypes = {
   post: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   auth: state.auth,
-  post: state.post
+  post: state.post,
+  props: ownProps
 });
 
 HomeScreen.navigationOptions = {
@@ -226,7 +243,11 @@ HomeScreen.navigationOptions = {
   )
 };
 
-export default connect(mapStateToProps, { getPosts, refreshPosts })(HomeScreen);
+export default connect(mapStateToProps, {
+  getPosts,
+  refreshPosts,
+  _getPostDetail
+})(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {

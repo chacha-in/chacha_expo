@@ -222,7 +222,7 @@ const MapScreen = ({ getToiletById, props, auth }) => {
   ) : (
     <View style={{ flex: 1 }}>
       <Modal
-        animationType='slide'
+        animationType='fade'
         transparent={false}
         visible={writeToiletModalVisible}
         onRequestClose={() => {
