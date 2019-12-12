@@ -47,7 +47,15 @@ const HomeScreen = ({
       <TouchableOpacity
         style={{ width: '100%', height: '100%', justifyContent: 'center' }}
       >
-        <Text>{item.title}</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Text>{item.title}</Text>
+          <Text style={{ color: 'grey' }}>{item.comments.length}</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -97,18 +105,23 @@ const HomeScreen = ({
           }}
         >
           <View style={styles.inputContainer}>
+            <Text style={styles.title}>익명게시판</Text>
+            <Text style={{ color: 'gray' }}>제목을 입력하세요</Text>
             <TextInput
               value={values.title}
               onChangeText={title => setValues({ ...values, title })}
-              placeholder={'어떤 근심이 있으신가요?'}
+              // placeholder={'어떤 근심이 있으신가요?'}
               style={styles.input}
             />
+            <Text style={{ color: 'gray' }}>
+              근심을 풀어놓으세요. 익명으로 게시됩니다.
+            </Text>
             <TextInput
               multiline={true}
               numberOfLines={6}
               value={values.text}
               onChangeText={text => setValues({ ...values, text })}
-              placeholder={'근심을 풀어놓으세요. 익명으로 게시됩니다.'}
+              // placeholder={'근심을 풀어놓으세요. 익명으로 게시됩니다.'}
               style={styles.multilineInput}
             />
             <View style={{ width: 280 }}>
@@ -188,7 +201,7 @@ const HomeScreen = ({
                 fontWeight: 'bold'
               }}
             >
-              도움
+              도 움
             </Text>
           </TouchableOpacity>
         </View>
@@ -219,13 +232,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  title: { margin: 20, fontSize: 20 },
   inputContainer: {
     alignItems: 'center',
     marginBottom: 20,
     marginTop: 40
   },
   input: {
-    width: 280,
+    width: '80%',
     height: 44,
     padding: 10,
     marginBottom: 10,
@@ -235,7 +249,7 @@ const styles = StyleSheet.create({
 
   multilineInput: {
     textAlignVertical: 'top',
-    width: 280,
+    width: '80%',
     height: 120,
     padding: 10,
     marginBottom: 10,
