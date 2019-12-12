@@ -14,7 +14,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   AsyncStorage,
-  Keyboard
+  Keyboard,
+  Platform
 } from 'react-native';
 import { Icon, Button, Header, Left, Right, Title, Body } from 'native-base';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
@@ -47,11 +48,12 @@ const HomeScreen = ({
         marginRight: 20
       }}
     >
+      {/* Flatlist 아래에서 TouchableOpacity를 이용 할 때 onpress 메소드를 사용하자. onpressOut을 이용하면 스크롤과 동시에 터치되서 함수가 실행되어 버린다 */}
       <TouchableOpacity
-        onPressOut={() => {
+        onPress={() => {
           const selectedPost = posts.filter(post => post._id === item._id);
           _getPostDetail(selectedPost);
-          props.screenProps.navigation.navigate('PostDetail');
+          props.navigation.navigate('PostDetail');
         }}
         style={{ width: '100%', height: '100%', justifyContent: 'center' }}
       >
@@ -108,13 +110,31 @@ const HomeScreen = ({
 
   return (
     <View style={styles.container}>
-      <Header style={{ backgroundColor: 'white' }}>
-        <Left />
-        <Body>
-          <Title>익명 게시판</Title>
-        </Body>
-        <Right />
-      </Header>
+      {Platform.OS === 'ios' ? (
+        <Header noShadow style={{ backgroundColor: 'white' }}>
+          <Left />
+          <Body>
+            <Title style={{ color: 'black' }}>익명 게시판</Title>
+          </Body>
+          <Right />
+        </Header>
+      ) : (
+        <Header
+          noShadow
+          style={{
+            backgroundColor: 'white',
+            marginTop: 25,
+            borderBottomWidth: 1,
+            borderBottomColor: '#d9d9d9'
+          }}
+        >
+          <Left />
+          <Body>
+            <Title style={{ color: 'black' }}>익명 게시판</Title>
+          </Body>
+          <Right />
+        </Header>
+      )}
 
       <Modal
         animationType='fade'

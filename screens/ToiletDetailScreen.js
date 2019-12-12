@@ -170,7 +170,7 @@ const ToiletDetail = ({
         style={{ flex: 1 }}
         behavior='padding'
         keyboardVerticalOffset={Platform.select({ ios: 50, android: 65 })}
-        // enabled
+        enabled
       >
         <View style={{ backgroundColor: 'white' }}>
           <View style={{ flexDirection: 'row' }}>
@@ -188,18 +188,20 @@ const ToiletDetail = ({
             </TouchableOpacity>
           </View>
 
-          <View>
-            <Button
-              full
-              transparent
-              onPressOut={() =>
-                props.navigation.navigate('App', { name: 'MapScreen' })
-              }
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 40
+            }}
+          >
+            <TouchableOpacity
+              onPressOut={() => props.navigation.navigate('MapScreen')}
             >
               <Text style={{ fontSize: 16, color: 'gray' }}>
                 지도로 돌아가기
               </Text>
-            </Button>
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>

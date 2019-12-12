@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { logout } from '../actions/auth';
+
+import store from '../store';
+import { loadUser } from '../actions/auth';
 
 import {
   View,
@@ -9,7 +12,8 @@ import {
   StyleSheet,
   Button,
   AsyncStorage,
-  ActivityIndicator
+  ActivityIndicator,
+  Platform
 } from 'react-native';
 import { Icon, Header, Left, Right, Title, Body } from 'native-base';
 
@@ -18,24 +22,46 @@ const ProfileScreen = ({
   logout,
   auth: { user, loading, authenticated }
 }) => {
+  useEffect(() => {
+    store.dispatch(loadUser());
+  }, []);
+
   const _signOutAsync = async () => {
     // await AsyncStorage.clear();
     logout();
 
-    props.screenProps.navigation.navigate('Auth');
+    props.navigation.navigate('Auth');
   };
 
   return loading ? (
     <ActivityIndicator />
   ) : (
     <View style={{ flex: 1 }}>
-      <Header style={{ backgroundColor: 'white' }}>
-        <Left />
-        <Body>
-          <Title>배탈의 민족</Title>
-        </Body>
-        <Right />
-      </Header>
+      {Platform.OS === 'ios' ? (
+        <Header noShadow style={{ backgroundColor: 'white' }}>
+          <Left />
+          <Body>
+            <Title style={{ color: 'black' }}>배탈의 민족</Title>
+          </Body>
+          <Right />
+        </Header>
+      ) : (
+        <Header
+          noShadow
+          style={{
+            backgroundColor: 'white',
+            marginTop: 25,
+            borderBottomWidth: 1,
+            borderBottomColor: '#d9d9d9'
+          }}
+        >
+          <Left />
+          <Body>
+            <Title style={{ color: 'black' }}>배탈의 민족</Title>
+          </Body>
+          <Right />
+        </Header>
+      )}
       <View style={styles.container}>
         <Text style={styles.text}>사용자 : {user.username}</Text>
         <Text style={styles.text}>이메일 : {user.email}</Text>

@@ -17,7 +17,16 @@ import {
   Keyboard
 } from 'react-native';
 
-import { Icon, Button, Header, Left, Right, Title, Body } from 'native-base';
+import {
+  Icon,
+  Button,
+  Header,
+  Left,
+  Right,
+  Title,
+  Body,
+  Container
+} from 'native-base';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
@@ -221,13 +230,32 @@ const MapScreen = ({ getToiletById, props, auth }) => {
     </View>
   ) : (
     <View style={{ flex: 1 }}>
-      <Header style={{ backgroundColor: 'white' }}>
-        <Left />
-        <Body>
-          <Title>모두의 화장실</Title>
-        </Body>
-        <Right />
-      </Header>
+      {Platform.OS === 'ios' ? (
+        <Header noShadow style={{ backgroundColor: 'white' }}>
+          <Left />
+          <Body>
+            <Title style={{ color: 'black' }}>모두의 화장실</Title>
+          </Body>
+          <Right />
+        </Header>
+      ) : (
+        <Header
+          noShadow
+          style={{
+            backgroundColor: 'white',
+            marginTop: 25,
+            borderBottomWidth: 1,
+            borderBottomColor: '#d9d9d9'
+          }}
+        >
+          <Left />
+          <Body>
+            <Title style={{ color: 'black' }}>모두의 화장실</Title>
+          </Body>
+          <Right />
+        </Header>
+      )}
+
       <Modal
         animationType='fade'
         transparent={false}
@@ -406,7 +434,7 @@ const MapScreen = ({ getToiletById, props, auth }) => {
                 <Callout
                   onPress={() => {
                     getToiletById(marker._id);
-                    props.screenProps.navigation.navigate('ToiletDetail');
+                    props.navigation.navigate('ToiletDetail');
                   }}
                 >
                   <Text>{marker.title}</Text>
