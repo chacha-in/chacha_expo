@@ -17,7 +17,8 @@ import {
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  FlatList
 } from 'react-native';
 
 import { Button } from 'native-base';
@@ -90,6 +91,22 @@ const ToiletDetail = ({
     }
   };
 
+  const _renderItem = ({ item }) => (
+    <Text style={{ fontSize: 18 }}>
+      <Text style={{ fontWeight: 'bold' }}>{item.username}</Text> {item.text}{' '}
+      {item.user === user._id ? (
+        <Text style={{ color: 'red' }} onPress={() => removeComment(item._id)}>
+          <FontAwesomeIcon
+            style={{ alignSelf: 'flex-end' }}
+            name='backspace'
+            size={18}
+            color='#ff4d4d'
+          />
+        </Text>
+      ) : null}
+    </Text>
+  );
+
   return toiletDetail === null ? (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <ActivityIndicator size='large' />
@@ -145,24 +162,31 @@ const ToiletDetail = ({
 
       {/* 댓글 리스트 */}
       <View style={{ flex: 7, width: 300 }}>
-        <ScrollView>
+        <FlatList
+          data={toiletDetail.comments}
+          renderItem={_renderItem}
+          keyExtractor={item => item._id}
+        />
+
+        {/* <ScrollView>
           {toiletDetail.comments &&
             toiletDetail.comments.map(comment => (
-              <Text key={comment._id}>
+              <Text style={{ fontSize: 20 }} key={comment._id}>
                 <Text style={{ fontWeight: 'bold' }}>{comment.username}</Text>{' '}
                 {comment.text}{' '}
                 {comment.user === user._id ? (
-                  <FontAwesomeIcon
-                    onPress={() => removeComment(comment._id)}
-                    style={{ alignSelf: 'flex-end' }}
-                    name='backspace'
-                    size={17}
-                    color='#ff4d4d'
-                  />
+                  <Text onPress={() => removeComment(comment._id)}>
+                    <FontAwesomeIcon
+                      style={{ alignSelf: 'flex-end' }}
+                      name='backspace'
+                      size={20}
+                      color='#ff4d4d'
+                    />
+                  </Text>
                 ) : null}
               </Text>
             ))}
-        </ScrollView>
+        </ScrollView> */}
       </View>
 
       {/* 댓글 작성 */}

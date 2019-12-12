@@ -32,9 +32,9 @@ const PostDetailScreen = ({
     </View>
   ) : (
     <View style={styles.container}>
-      <View style={{ flex: 1, marginBottom: 60 }}>
+      <View style={{ flex: 1, marginBottom: 60, width: '85%' }}>
         <Text style={styles.title}>{postDetail.title}</Text>
-        <Text>{postDetail.text}</Text>
+        <Text style={{ textAlign: 'left' }}>{postDetail.text}</Text>
       </View>
 
       {/* 댓글 리스트 */}
@@ -69,7 +69,7 @@ const PostDetailScreen = ({
             <TextInput
               value={comment}
               onChangeText={comment => setComment(comment)}
-              placeholder={'이 화장실에 대해 얘기해주세요'}
+              placeholder={'익명 댓글을 남겨주세요'}
               style={styles.input}
             />
             <TouchableOpacity
@@ -80,18 +80,20 @@ const PostDetailScreen = ({
             </TouchableOpacity>
           </View>
 
-          <View>
-            <Button
-              full
-              transparent
-              onPressOut={() =>
-                props.navigation.navigate('App', { name: 'HomeScreen' })
-              }
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 40
+            }}
+          >
+            <TouchableOpacity
+              onPressOut={() => props.navigation.navigate('HomeScreen')}
             >
               <Text style={{ fontSize: 16, color: 'gray' }}>
                 게시판으로 돌아가기
               </Text>
-            </Button>
+            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingBottom: 20
   },
-  title: { margin: 5, fontSize: 25, fontWeight: 'bold' },
+  title: { margin: 5, fontSize: 25, fontWeight: 'bold', textAlign: 'center' },
   input: {
     width: 320,
     height: 44,
