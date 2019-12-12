@@ -13,9 +13,10 @@ import {
   Modal,
   TextInput,
   TouchableWithoutFeedback,
-  AsyncStorage
+  AsyncStorage,
+  Keyboard
 } from 'react-native';
-import { Icon, Button } from 'native-base';
+import { Icon, Button, Header, Left, Right, Title, Body } from 'native-base';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 
 const HomeScreen = ({
@@ -107,6 +108,14 @@ const HomeScreen = ({
 
   return (
     <View style={styles.container}>
+      <Header style={{ backgroundColor: 'white' }}>
+        <Left />
+        <Body>
+          <Title>익명 게시판</Title>
+        </Body>
+        <Right />
+      </Header>
+
       <Modal
         animationType='fade'
         transparent={false}

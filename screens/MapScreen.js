@@ -17,7 +17,7 @@ import {
   Keyboard
 } from 'react-native';
 
-import { Icon, Button } from 'native-base';
+import { Icon, Button, Header, Left, Right, Title, Body } from 'native-base';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
@@ -221,6 +221,13 @@ const MapScreen = ({ getToiletById, props, auth }) => {
     </View>
   ) : (
     <View style={{ flex: 1 }}>
+      <Header style={{ backgroundColor: 'white' }}>
+        <Left />
+        <Body>
+          <Title>모두의 화장실</Title>
+        </Body>
+        <Right />
+      </Header>
       <Modal
         animationType='fade'
         transparent={false}
@@ -474,7 +481,7 @@ const MapScreen = ({ getToiletById, props, auth }) => {
       <View
         style={{
           position: 'absolute', //use absolute position to show button on top of the map
-          top: '0%', //for center align
+          bottom: '0%', //for center align
           right: '0%',
           // alignSelf: 'flex-end', //for align to right
           margin: 17

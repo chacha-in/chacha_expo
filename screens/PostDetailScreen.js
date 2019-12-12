@@ -22,6 +22,7 @@ const PostDetailScreen = ({
   auth: { user },
   post: { postDetail, loading }
 }) => {
+  console.log(props);
   const [comment, setComment] = useState('');
 
   console.log('postDetail 진입');
@@ -83,7 +84,9 @@ const PostDetailScreen = ({
             <Button
               full
               transparent
-              onPressOut={() => props.navigation.goBack()}
+              onPressOut={() =>
+                props.navigation.navigate('App', { name: 'HomeScreen' })
+              }
             >
               <Text style={{ fontSize: 16, color: 'gray' }}>
                 게시판으로 돌아가기

@@ -1,11 +1,17 @@
-import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Platform, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
+import { Root } from 'native-base';
 
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 
-import MainScreen from './screens/MainScreen';
+// 하단 탭에 들어갈 컴포넌트들
+import HomeScreen from './screens/HomeScreen';
+import MapScreen from './screens/MapScreen';
+import ProfileScreen from './screens/ProfileScreen';
+
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import AuthLoadingScreen from './screens/AuthLoadingScreen';
@@ -21,10 +27,18 @@ const App = () => {
   useEffect(() => {
     store.dispatch(loadUser());
     Font.loadAsync({
-      bm: require('./assets/fonts/BMEULJIROTTF.ttf')
+      Roboto: require('native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf')
     });
+    setLoading(false);
   }, []);
-  return (
+
+  const [loading, setLoading] = useState(true);
+  return loading ? (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size='large' />
+    </View>
+  ) : (
     <Provider store={store}>
       <View style={{ flex: 1 }}>
         <AppStackNavigator style={{ flex: 1 }} />
@@ -33,9 +47,39 @@ const App = () => {
   );
 };
 
-const AppStack = createStackNavigator({
-  MainScreen: MainScreen
-});
+// 하단 탭 네비게이터 생성
+const AppTabNavigator = createMaterialTopTabNavigator(
+  {
+    // SearchTab: SearchTab,
+    HomeScreen: HomeScreen,
+    MapScreen: MapScreen,
+    ProfileScreen: ProfileScreen
+  },
+  {
+    initialRouteName: 'HomeScreen',
+    animationEnabled: true,
+    swipeEnabled: false,
+    tabBarPosition: 'bottom',
+    tabBarOptions: {
+      style: {
+        ...Platform.select({
+          ios: {
+            backgroundColor: 'white'
+          },
+          android: {
+            backgroundColor: 'white'
+          }
+        })
+      },
+      iconStyle: { height: 60, justifyContent: 'center' },
+      activeTintColor: '#000',
+      inactiveTintColor: '#d1cece',
+      upperCaseLabel: false,
+      showLabel: false,
+      showIcon: true
+    }
+  }
+);
 
 const AuthStack = createStackNavigator({
   SignIn: SignInScreen,
@@ -46,7 +90,7 @@ const AppStackNavigator = createAppContainer(
   createSwitchNavigator(
     {
       AuthLoading: AuthLoadingScreen,
-      App: AppStack,
+      App: AppTabNavigator,
       Auth: AuthStack,
       ToiletDetail: ToiletDetailScreen,
       PostDetail: PostDetailScreen

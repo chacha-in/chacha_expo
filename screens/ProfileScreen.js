@@ -11,7 +11,7 @@ import {
   AsyncStorage,
   ActivityIndicator
 } from 'react-native';
-import { Icon } from 'native-base';
+import { Icon, Header, Left, Right, Title, Body } from 'native-base';
 
 const ProfileScreen = ({
   props,
@@ -28,10 +28,19 @@ const ProfileScreen = ({
   return loading ? (
     <ActivityIndicator />
   ) : (
-    <View style={styles.container}>
-      <Text style={styles.text}>사용자 : {user.username}</Text>
-      <Text style={styles.text}>이메일 : {user.email}</Text>
-      <Button title='다음에 또 만나요' onPress={_signOutAsync} />
+    <View style={{ flex: 1 }}>
+      <Header style={{ backgroundColor: 'white' }}>
+        <Left />
+        <Body>
+          <Title>배탈의 민족</Title>
+        </Body>
+        <Right />
+      </Header>
+      <View style={styles.container}>
+        <Text style={styles.text}>사용자 : {user.username}</Text>
+        <Text style={styles.text}>이메일 : {user.email}</Text>
+        <Button title='다음에 또 만나요' onPress={_signOutAsync} />
+      </View>
     </View>
   );
 };

@@ -192,7 +192,9 @@ const ToiletDetail = ({
             <Button
               full
               transparent
-              onPressOut={() => props.navigation.navigate('App')}
+              onPressOut={() =>
+                props.navigation.navigate('App', { name: 'MapScreen' })
+              }
             >
               <Text style={{ fontSize: 16, color: 'gray' }}>
                 지도로 돌아가기
