@@ -59,6 +59,7 @@ const HomeScreen = () => {
       const resJson = await res.json();
       console.log(resJson);
       if (resJson === null || resJson.length === 0) {
+        setPage(page);
         setRefreshing(false);
         return;
       }
@@ -88,6 +89,7 @@ const HomeScreen = () => {
   const _handleRefresh = () => {
     setRefreshing(true);
     setPage(1);
+
     _getData();
   };
 
@@ -174,7 +176,7 @@ const HomeScreen = () => {
           <FlatList
             data={data}
             renderItem={_renderItem}
-            keyExtractor={(item, index) => item.id}
+            keyExtractor={item => item._id}
             onEndReached={_handleLoadMore}
             onEndReachedThreshold={1}
             refreshing={refreshing}
