@@ -9,8 +9,7 @@ import {
   ADD_COMMENT,
   REMOVE_COMMENT,
   ADD_POST_STANDBY,
-  GET_POSTS_BY_ID,
-  REFRESH_POSTS
+  GET_POSTS_BY_ID
 } from './types';
 
 // Get posts
@@ -231,21 +230,6 @@ export const deleteComment = (postId, commentId) => async dispatch => {
     });
 
     dispatch(setAlert('Comment Removed', 'success'));
-  } catch (err) {
-    dispatch({
-      type: POST_ERROR,
-      payload: { msg: err.response.statusText, status: err.response.status }
-    });
-  }
-};
-
-// Refresh posts
-export const refreshPosts = () => async dispatch => {
-  try {
-    dispatch({
-      type: REFRESH_POSTS
-      // refreshing: true
-    });
   } catch (err) {
     dispatch({
       type: POST_ERROR,

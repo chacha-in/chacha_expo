@@ -8,8 +8,7 @@ import {
   ADD_COMMENT,
   REMOVE_COMMENT,
   ADD_POST_STANDBY,
-  GET_POSTS_BY_ID,
-  REFRESH_POSTS
+  GET_POSTS_BY_ID
 } from '../actions/types';
 
 const initialState = {
@@ -40,11 +39,7 @@ export default (state = initialState, action) => {
         post: payload,
         loading: false
       };
-    case REFRESH_POSTS:
-      return {
-        ...state,
-        refreshing: true
-      };
+
     case ADD_POST:
       return {
         ...state,

@@ -28,7 +28,6 @@ const HomeScreen = ({
     getPosts();
   }, []);
 
-  // const [refreshing, setRefreshing] = useState(false);
   const [writePostModal, setWritePostModal] = useState(false);
 
   const [values, setValues] = useState({
@@ -52,11 +51,6 @@ const HomeScreen = ({
       </TouchableOpacity>
     </View>
   );
-
-  const _handleRefresh = () => {
-    setRefreshing(true);
-    getPosts();
-  };
 
   const writePost = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
@@ -84,7 +78,7 @@ const HomeScreen = ({
       text: ''
     });
     setWritePostModal(false);
-    _handleRefresh();
+    getPosts();
   };
 
   return (
