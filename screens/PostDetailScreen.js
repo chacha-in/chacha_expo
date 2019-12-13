@@ -8,7 +8,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage,
+  FlatList
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -17,29 +19,111 @@ import PropTypes from 'prop-types';
 import { Button } from 'native-base';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 
+import { updatePostComment, deletePostComment } from '../actions/post';
+
 const PostDetailScreen = ({
   props,
+  updatePostComment,
+  deletePostComment,
   auth: { user },
   post: { postDetail, loading }
 }) => {
   console.log(props);
   const [comment, setComment] = useState('');
 
-  console.log('postDetail 진입');
+  const saveComment = async () => {
+    if (comment === '') {
+      return;
+    }
+
+    const userToken = await AsyncStorage.getItem('userToken');
+
+    const _id = postDetail._id;
+
+    try {
+      const res = await fetch(`https://blochaid.io/api/posts/comment/${_id}`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'x-auth-token': userToken
+        },
+        body: JSON.stringify({ text: comment })
+      });
+
+      const resJson = await res.json();
+
+      updatePostComment(resJson);
+      setComment('');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeComment = async commentId => {
+    const userToken = await AsyncStorage.getItem('userToken');
+
+    const _id = postDetail._id;
+
+    try {
+      const res = await fetch(
+        `https://blochaid.io/api/posts/comment/${_id}/${commentId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'x-auth-token': userToken
+          }
+        }
+      );
+
+      const resJson = await res.json();
+
+      deletePostComment(resJson);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const _renderItem = ({ item }) => (
+    <Text style={{ fontSize: 15 }}>
+      {item.text}{' '}
+      {item.user === user._id ? (
+        <Text style={{ color: 'red' }} onPress={() => removeComment(item._id)}>
+          <FontAwesomeIcon
+            style={{ alignSelf: 'flex-end' }}
+            name='backspace'
+            size={15}
+            color='#ff4d4d'
+          />
+        </Text>
+      ) : null}
+    </Text>
+  );
+
   return loading ? (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <ActivityIndicator size='large' />
     </View>
   ) : (
     <View style={styles.container}>
-      <View style={{ flex: 1, marginBottom: 60, width: '85%' }}>
+      <View style={{ flex: 1, marginBottom: 60, width: '80%' }}>
         <Text style={styles.title}>{postDetail.title}</Text>
-        <Text style={{ textAlign: 'left' }}>{postDetail.text}</Text>
+        <Text style={{ textAlign: 'left', fontSize: 15 }}>
+          {postDetail.text}
+        </Text>
       </View>
 
       {/* 댓글 리스트 */}
-      <View style={{ flex: 7, width: 300 }}>
-        <ScrollView>
+      <View style={{ flex: 7, width: '80%' }}>
+        <FlatList
+          data={postDetail.comments}
+          renderItem={_renderItem}
+          keyExtractor={item => item._id}
+        />
+
+        {/* <ScrollView>
           {postDetail.comments.map(comment => (
             <Text key={comment._id}>
               {comment.text}{' '}
@@ -54,7 +138,7 @@ const PostDetailScreen = ({
               ) : null}
             </Text>
           ))}
-        </ScrollView>
+        </ScrollView> */}
       </View>
 
       {/* 댓글 작성 */}
@@ -64,7 +148,7 @@ const PostDetailScreen = ({
         keyboardVerticalOffset={Platform.select({ ios: 50, android: 65 })}
         // enabled
       >
-        <View style={{ backgroundColor: 'white' }}>
+        <View style={{ backgroundColor: 'white', alignItems: 'center' }}>
           <View style={{ flexDirection: 'row' }}>
             <TextInput
               value={comment}
@@ -111,7 +195,10 @@ const mapStateToProps = (state, ownProps) => ({
   props: ownProps
 });
 
-export default connect(mapStateToProps)(PostDetailScreen);
+export default connect(mapStateToProps, {
+  updatePostComment,
+  deletePostComment
+})(PostDetailScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -124,7 +211,7 @@ const styles = StyleSheet.create({
   },
   title: { margin: 5, fontSize: 25, fontWeight: 'bold', textAlign: 'center' },
   input: {
-    width: 320,
+    width: '81%',
     height: 44,
     // padding: 10,
 

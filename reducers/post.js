@@ -8,7 +8,10 @@ import {
   ADD_COMMENT,
   REMOVE_COMMENT,
   ADD_POST_STANDBY,
-  GET_POSTS_BY_ID
+  GET_POSTS_BY_ID,
+  UPDATE_POSTDETAIL_COMMENT,
+  DELETE_POSTDETAIL_COMMENT,
+  DELETE_POSTDETAIL_REDUCER
 } from '../actions/types';
 
 const initialState = {
@@ -51,6 +54,23 @@ export default (state = initialState, action) => {
         ...state,
         posts: state.posts.filter(post => post._id !== payload),
         loading: false
+      };
+    case DELETE_POSTDETAIL_COMMENT:
+      return {
+        ...state,
+        postDetail: payload,
+        loading: false
+      };
+    case DELETE_POSTDETAIL_REDUCER:
+      return {
+        ...state,
+        postDetail: null
+      };
+    case UPDATE_POSTDETAIL_COMMENT:
+      return {
+        ...state,
+
+        postDetail: { ...state.postDetail, comments: payload }
       };
     case POST_ERROR:
       return {

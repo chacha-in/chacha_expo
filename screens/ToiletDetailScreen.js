@@ -92,14 +92,14 @@ const ToiletDetail = ({
   };
 
   const _renderItem = ({ item }) => (
-    <Text style={{ fontSize: 18 }}>
+    <Text style={{ fontSize: 15 }}>
       <Text style={{ fontWeight: 'bold' }}>{item.username}</Text> {item.text}{' '}
       {item.user === user._id ? (
         <Text style={{ color: 'red' }} onPress={() => removeComment(item._id)}>
           <FontAwesomeIcon
             style={{ alignSelf: 'flex-end' }}
             name='backspace'
-            size={18}
+            size={15}
             color='#ff4d4d'
           />
         </Text>
@@ -113,9 +113,15 @@ const ToiletDetail = ({
     </View>
   ) : (
     <View style={styles.container}>
-      <View style={{ flex: 1, marginBottom: 60 }}>
+      <View style={{ flex: 1, marginBottom: 60, width: '80%' }}>
         <Text style={styles.title}>{toiletDetail.title}</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            fontSize: 15
+          }}
+        >
           {toiletDetail.sex === 'both' ? (
             <>
               <FontAwesomeIcon name='female' size={40} color='#ff4d4d' />
@@ -161,7 +167,7 @@ const ToiletDetail = ({
       </View>
 
       {/* 댓글 리스트 */}
-      <View style={{ flex: 7, width: 300 }}>
+      <View style={{ flex: 7, width: '80%' }}>
         <FlatList
           data={toiletDetail.comments}
           renderItem={_renderItem}
@@ -196,7 +202,7 @@ const ToiletDetail = ({
         keyboardVerticalOffset={Platform.select({ ios: 50, android: 65 })}
         enabled
       >
-        <View style={{ backgroundColor: 'white' }}>
+        <View style={{ backgroundColor: 'white', alignItems: 'center' }}>
           <View style={{ flexDirection: 'row' }}>
             <TextInput
               value={comment}
@@ -257,9 +263,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingBottom: 20
   },
-  title: { margin: 5, fontSize: 25, fontWeight: 'bold' },
+  title: { margin: 5, fontSize: 25, fontWeight: 'bold', textAlign: 'center' },
   input: {
-    width: 320,
+    width: '81%',
     height: 44,
     // padding: 10,
 

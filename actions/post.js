@@ -9,7 +9,10 @@ import {
   ADD_COMMENT,
   REMOVE_COMMENT,
   ADD_POST_STANDBY,
-  GET_POSTS_BY_ID
+  GET_POSTS_BY_ID,
+  UPDATE_POSTDETAIL_COMMENT,
+  DELETE_POSTDETAIL_COMMENT,
+  DELETE_POSTDETAIL_REDUCER
 } from './types';
 
 // Get posts
@@ -235,4 +238,14 @@ export const deleteComment = (postId, commentId) => async dispatch => {
       payload: { msg: err.response.statusText, status: err.response.status }
     });
   }
+};
+
+// Update post by id
+export const updatePostComment = comments => async dispatch => {
+  dispatch({ type: UPDATE_POSTDETAIL_COMMENT, payload: comments });
+};
+
+// Delete post by id
+export const deletePostComment = postDetail => async dispatch => {
+  dispatch({ type: DELETE_POSTDETAIL_COMMENT, payload: postDetail });
 };
