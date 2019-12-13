@@ -56,7 +56,7 @@ const AppTabNavigator = createMaterialTopTabNavigator(
     ProfileScreen: ProfileScreen
   },
   {
-    initialRouteName: 'HomeScreen',
+    initialRouteName: 'MapScreen',
     animationEnabled: true,
     swipeEnabled: false,
     tabBarPosition: 'bottom',

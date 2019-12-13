@@ -58,13 +58,13 @@ export default (state = initialState, action) => {
     case DELETE_POSTDETAIL_COMMENT:
       return {
         ...state,
-        postDetail: payload,
+        postDetail: { ...state.postDetail, comments: payload },
         loading: false
       };
     case DELETE_POSTDETAIL_REDUCER:
       return {
         ...state,
-        postDetail: null
+        postDetail: { ...state.postDetail, comments: null }
       };
     case UPDATE_POSTDETAIL_COMMENT:
       return {

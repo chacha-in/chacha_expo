@@ -41,6 +41,7 @@ const PostDetailScreen = ({
     const _id = postDetail._id;
 
     try {
+      setComment('');
       const res = await fetch(`https://blochaid.io/api/posts/comment/${_id}`, {
         method: 'POST',
         headers: {
@@ -79,6 +80,12 @@ const PostDetailScreen = ({
       );
 
       const resJson = await res.json();
+      console.log(resJson);
+
+      if (resJson.msg) {
+        console.log('막혔다');
+        return;
+      }
 
       deletePostComment(resJson);
     } catch (error) {

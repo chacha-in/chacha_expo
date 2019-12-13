@@ -33,6 +33,7 @@ const HomeScreen = ({
   }, []);
 
   const [writePostModal, setWritePostModal] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(false);
 
   const [values, setValues] = useState({
     title: '',
